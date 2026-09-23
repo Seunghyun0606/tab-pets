@@ -1,0 +1,22 @@
+id: ADR-003
+title: "Render pets as transparent raster sprites"
+status: active
+date: "2026-09-24"
+applies_to:
+  - TASK-004
+  - TASK-005
+  - asset-production
+context: >-
+  The prototype needs a cozy, authored character style and predictable browser performance across
+  Browser World and Home.
+decision: >-
+  Use transparent WebP raster sprites for pet animation and CSS transforms for movement. Use SVG
+  only for interface and furniture where appropriate. Do not use runtime 3D.
+consequences:
+  - "Animation frames need a shared canvas and foot baseline."
+  - "Sprite animation timing stays separate from position movement."
+  - "Browser and Home exports must originate from the same character master."
+alternatives_considered:
+  - "Runtime 3D: rejected as unnecessary complexity for the validation slice."
+  - "SVG pet animation: rejected because it does not match the intended authored raster look."
+

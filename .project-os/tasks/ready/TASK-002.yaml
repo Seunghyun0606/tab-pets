@@ -1,0 +1,52 @@
+id: TASK-002
+title: "Implement PetState v1 persistence"
+role: developer
+milestone: M0
+priority: P0
+status: ready
+
+objective: "schemaVersion 1의 단일 PetState와 chrome.storage.local repository를 구현한다."
+why: "Browser World와 Home이 같은 펫을 표현하고 extension process가 중단되어도 상태를 복원하려면 먼저 영속 상태 계약이 필요하다."
+
+scope:
+  include:
+    - "PetState v1 TypeScript schema와 default Momo state"
+    - "runtime validation과 0~100/0.0~1.0 bounds normalization"
+    - "load, save, update repository API"
+    - "없는 저장값과 손상된 저장값의 안전한 처리"
+    - "향후 schema migration registry 진입점"
+    - "repository unit tests"
+  exclude:
+    - "Needs decay와 Behavior 선택"
+    - "UI rendering"
+    - "v2 migration의 실제 구현"
+
+depends_on: [TASK-001]
+specs:
+  - "specs/architecture/runtime-architecture.md"
+  - "specs/feature/pet-brain.md"
+relevant_files:
+  - "src/pet/model/pet.ts"
+  - "src/pet/state/petStore.ts"
+  - "src/storage/schema.ts"
+  - "src/storage/repository.ts"
+  - "src/storage/migrations.ts"
+active_decisions:
+  - ".project-os/decisions/ADR-001-single-pet-state.yaml"
+  - ".project-os/decisions/ADR-004-deterministic-pet-brain.yaml"
+context_keys: [runtime, pet-brain]
+
+acceptance:
+  - "저장값이 없으면 유효한 schemaVersion 1 Momo state를 한 번 생성하고 반환한다."
+  - "저장 후 새 runtime context에서 같은 identity, presence, needs, relationship, behavior, position, timestamps를 읽는다."
+  - "update가 동시에 들어와도 repository boundary에서 손실 갱신을 방지한다."
+  - "잘못된 range와 unknown schema version은 조용히 오염된 상태로 사용되지 않고 명시적인 fallback 또는 error path를 따른다."
+  - "unit tests가 default, round-trip, normalization, invalid data, migration dispatch를 검증한다."
+verification:
+  - "npm run typecheck"
+  - "npm test -- storage"
+  - "Chrome extension reload 전후 storage round-trip smoke check"
+
+human_gate: false
+risk: medium
+

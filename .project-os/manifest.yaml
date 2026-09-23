@@ -1,0 +1,18 @@
+project_os:
+  scaffold_version: "0.2.0"
+  schema_version: "1"
+  package_compatibility: ">=0.2,<1.0"
+
+project:
+  id: "tab-pets"
+  name: "tab-pets"
+
+profile: default
+
+sources:
+  project: "../PROJECT.md"
+  state: "state/current.yaml"
+  roadmap: "state/roadmap.yaml"
+  backlog: "state/backlog.yaml"
+  quality: "quality/gates.yaml"
+  context_index: "context/index.yaml"

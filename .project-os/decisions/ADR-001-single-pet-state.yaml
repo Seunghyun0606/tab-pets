@@ -1,0 +1,23 @@
+id: ADR-001
+title: "Use one persistent PetState across Browser World and Home"
+status: active
+date: "2026-09-24"
+applies_to:
+  - TASK-002
+  - TASK-003
+  - TASK-004
+  - TASK-005
+context: >-
+  Browser content scripts and the Side Panel can be created and destroyed independently.
+  Separate state ownership would make one pet appear as multiple inconsistent entities.
+decision: >-
+  Keep one schema-versioned PetState in chrome.storage.local. Browser World and Pet Home
+  render that state and send typed intents; neither surface owns an independent long-term copy.
+consequences:
+  - "All persistent mutations pass through a shared repository boundary."
+  - "Every consumer must tolerate asynchronous hydration and state updates."
+  - "Schema migration is required from version 1 onward."
+alternatives_considered:
+  - "Per-tab PetState: rejected because tabs would diverge."
+  - "Separate Browser and Home entities: rejected because it breaks continuity."
+

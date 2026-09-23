@@ -1,0 +1,24 @@
+id: ADR-002
+title: "Isolate Browser World in a bounded Shadow DOM overlay"
+status: active
+date: "2026-09-24"
+applies_to:
+  - TASK-004
+  - TASK-005
+  - TASK-006
+context: >-
+  The pet must coexist with arbitrary sites without inheriting host styles, hiding core content,
+  or stealing clicks from the page.
+decision: >-
+  Render Browser World from a Content Script inside a Shadow DOM overlay limited to the bottom
+  area of the viewport. The overlay passes pointer events through by default; only explicit pet
+  interaction targets receive them. Movement uses an internal coordinate system and CSS transforms,
+  not host-DOM collision physics.
+consequences:
+  - "Host CSS and pet CSS remain isolated."
+  - "The renderer must clamp bounds and respond to viewport resize."
+  - "Pet interaction hit areas require explicit pointer-event handling and accessibility labels."
+alternatives_considered:
+  - "Inject into the host DOM: rejected because style and layout conflicts are uncontrolled."
+  - "Full-page physics: rejected because it raises interference and complexity without validating the product hypothesis."
+

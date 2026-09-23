@@ -1,0 +1,48 @@
+id: TASK-003
+title: "Build the Side Panel shell and state round-trip"
+role: developer
+milestone: M0
+priority: P1
+status: ready
+
+objective: "Side Panel이 열리고 동일한 persistent Momo state를 읽어 최소 Home shell에 표시하게 한다."
+why: "M0에서 Home의 전체 기능보다 먼저 Chrome Side Panel surface와 한 상태의 연결을 증명해야 한다."
+
+scope:
+  include:
+    - "Side Panel application mount와 basic error/loading state"
+    - "shared repository 또는 typed message를 통한 PetState hydration"
+    - "Momo identity와 current presence를 보여 주는 최소 개발용 view"
+    - "state change를 수신해 stale copy 없이 갱신"
+  exclude:
+    - "Room artwork와 furniture interaction"
+    - "Feed, Play, Rest"
+    - "Home transition animation"
+    - "final visual design"
+
+depends_on: [TASK-001, TASK-002]
+specs:
+  - "specs/architecture/runtime-architecture.md"
+  - "specs/ux/experience-flows.md"
+relevant_files:
+  - "src/home/App.tsx"
+  - "src/home/index.html"
+  - "src/messaging/messages.ts"
+  - "src/messaging/bus.ts"
+active_decisions:
+  - ".project-os/decisions/ADR-001-single-pet-state.yaml"
+context_keys: [runtime, experience]
+
+acceptance:
+  - "Extension action에서 Side Panel을 열 수 있다."
+  - "Side Panel이 default 또는 저장된 Momo state를 loading/error 처리와 함께 표시한다."
+  - "다른 runtime surface에서 저장된 변경을 Side Panel 재생성 또는 update event 후 반영한다."
+  - "Side Panel이 별도 PetState entity를 만들거나 장기 상태를 독자적으로 계산하지 않는다."
+verification:
+  - "npm run build"
+  - "npm run typecheck"
+  - "npm test -- home"
+  - "Chrome에서 Side Panel open, close, reopen과 state hydration을 smoke check"
+
+human_gate: false
+risk: low

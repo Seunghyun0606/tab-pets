@@ -1,0 +1,52 @@
+id: TASK-005
+title: "Integrate and automate the runtime foundation smoke path"
+role: developer
+milestone: M0
+priority: P1
+status: ready
+
+objective: "Extension shell, persistence, Side Panel, static overlay를 하나의 반복 가능한 M0 smoke flow로 통합한다."
+why: "개별 surface가 구현되어도 실제 Chrome lifecycle에서 함께 동작한다는 증거가 없으면 Runtime Foundation을 완료할 수 없다."
+
+scope:
+  include:
+    - "typed state request/update message wiring"
+    - "local deterministic test page"
+    - "Playwright persistent-context extension harness 또는 동등한 자동화"
+    - "load, overlay visible, Side Panel state hydration, reload persistence smoke flow"
+    - "extension runtime error와 console error 수집"
+  exclude:
+    - "Pet click menu와 Call Home"
+    - "animation과 behavior engine"
+    - "public website visual approval"
+
+depends_on: [TASK-003, TASK-004]
+specs:
+  - "specs/architecture/runtime-architecture.md"
+  - "specs/product/00-initial-plan.md"
+relevant_files:
+  - "src/messaging/messages.ts"
+  - "src/messaging/bus.ts"
+  - "tests/e2e/"
+  - "playwright.config.ts"
+active_decisions:
+  - ".project-os/decisions/ADR-001-single-pet-state.yaml"
+  - ".project-os/decisions/ADR-002-shadow-dom-overlay.yaml"
+  - ".project-os/decisions/ADR-003-sprite-rendering.yaml"
+context_keys: [runtime, product-direction]
+
+acceptance:
+  - "한 command가 production extension을 build하고 deterministic smoke fixture를 실행한다."
+  - "smoke flow가 Extension load, Content Script injection, 하나의 visible Pet root를 검증한다."
+  - "smoke flow가 Side Panel 또는 그 runtime adapter의 PetState hydration을 검증한다."
+  - "extension reload와 page reload 뒤 identity와 normalized position이 유지된다."
+  - "uncaught extension runtime error와 unexpected page console error가 test를 실패시킨다."
+verification:
+  - "npm run build"
+  - "npm run typecheck"
+  - "npm test"
+  - "npm run test:e2e"
+
+human_gate: false
+risk: high
+

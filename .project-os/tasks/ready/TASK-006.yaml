@@ -1,0 +1,48 @@
+id: TASK-006
+title: "Verify M0 across the supported site matrix"
+role: qa
+milestone: M0
+priority: P1
+status: ready
+
+objective: "M0 Runtime Foundation이 일반 사이트에서 표시, 입력 격리, 상태 지속 기준을 충족하는지 독립적으로 검증한다."
+why: "로컬 fixture만으로는 실제 사이트의 stacking context, hostile CSS, dynamic navigation과 Extension lifecycle 문제를 충분히 발견할 수 없다."
+
+scope:
+  include:
+    - "M0 acceptance와 automated evidence review"
+    - "구조가 다른 일반 사이트 10곳 compatibility matrix"
+    - "host click, scroll, selection, viewport resize, tab change, extension reload 확인"
+    - "발견 이슈의 severity와 재현 절차 기록"
+  exclude:
+    - "기능 수정 구현"
+    - "animation 자연스러움과 애착 가설의 최종 승인"
+    - "인증, 결제, 민감 데이터 입력이 필요한 사이트"
+
+depends_on: [TASK-005]
+specs:
+  - "specs/architecture/runtime-architecture.md"
+  - "specs/product/00-initial-plan.md"
+relevant_files:
+  - "tests/e2e/"
+active_decisions:
+  - ".project-os/decisions/ADR-001-single-pet-state.yaml"
+  - ".project-os/decisions/ADR-002-shadow-dom-overlay.yaml"
+context_keys: [runtime, product-direction]
+
+acceptance:
+  - "자동 build, unit, smoke 결과가 모두 pass다."
+  - "Google Search, GitHub, YouTube, Reddit, Notion public page, Wikipedia와 추가 일반 사이트 네 곳의 결과가 기록되어 있다."
+  - "10곳 모두에서 Momo가 보이고 host CSS에 의해 깨지지 않는다."
+  - "10곳 모두에서 Pet 밖의 주요 page interaction이 정상 동작한다."
+  - "tab change와 extension/page reload 후 치명적인 runtime error가 없고 상태가 복원된다."
+  - "critical issue가 0이며 non-critical finding은 재현 절차와 후속 Task 제안을 가진다."
+verification:
+  - "projectctl context TASK-006 --role qa"
+  - "npm run build"
+  - "npm test"
+  - "npm run test:e2e"
+  - "10-site compatibility matrix와 browser console evidence review"
+
+human_gate: false
+risk: medium

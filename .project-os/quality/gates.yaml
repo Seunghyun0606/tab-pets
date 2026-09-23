@@ -1,0 +1,24 @@
+required:
+  build: false
+  lint: false
+  typecheck: false
+  unit_test: false
+  integration_test: false
+  independent_review: true
+
+thresholds:
+  critical_issues: 0
+
+human_gate:
+  required:
+    - product_vision_change
+    - milestone_scope_change
+    - breaking_architecture_change
+    - destructive_operation
+    - production_release
+    - subjective_final_approval
+  not_required:
+    - implementation_detail
+    - refactoring_within_existing_architecture
+    - test_creation
+    - clear_bug_fix

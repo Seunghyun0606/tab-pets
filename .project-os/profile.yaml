@@ -1,0 +1,9 @@
+profile: default
+quality_profile: standard
+
+inherit:
+  roles: default
+  context: default
+  quality: standard
+
+overrides: {}

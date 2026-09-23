@@ -1,0 +1,20 @@
+id: ADR-004
+title: "Keep Pet Brain deterministic at its domain boundary"
+status: active
+date: "2026-09-24"
+applies_to:
+  - pet-brain
+context: >-
+  Behavior choice, elapsed-time updates, and random variation are difficult to debug when timing
+  and randomness are hidden inside UI processes.
+decision: >-
+  Implement Pet Brain primarily as pure functions. Pass the current time and random source into
+  domain operations, use seeded RNG in tests, and derive time-based changes from persisted timestamps
+  rather than relying on a continuously running timer.
+consequences:
+  - "Behavior and long-inactivity cases can be reproduced in unit tests."
+  - "UI runtimes remain adapters instead of business-rule owners."
+  - "Callers must provide explicit time and random dependencies."
+alternatives_considered:
+  - "Math.random and Date.now inside selectors: rejected because failures are hard to reproduce."
+  - "Continuous decay loop: rejected because extension processes suspend and restart."

@@ -1,0 +1,9 @@
+id: M0
+name: Replace with milestone name
+status: planned
+objective: ""
+entry_criteria: []
+exit_criteria: []
+tasks: []
+human_gate:
+  required_on_completion: false

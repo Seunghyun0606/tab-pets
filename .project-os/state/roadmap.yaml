@@ -1,0 +1,93 @@
+milestones:
+  - id: M0
+    name: Runtime Foundation
+    status: active
+    objective: "일반 웹페이지와 Side Panel에서 하나의 정적 Momo를 안전하게 표시하고 상태를 유지하는 Chrome MV3 기반을 만든다."
+    entry_criteria:
+      - "제품 기준 문서와 Runtime 아키텍처 결정이 확정되어 있다."
+      - "Momo의 임시 정적 에셋을 사용할 수 있다."
+    exit_criteria:
+      - "압축 해제된 MV3 Extension을 Chrome에서 로드할 수 있다."
+      - "Content Script가 Shadow DOM Pet Overlay를 주입하고 Side Panel을 열 수 있다."
+      - "Pet Overlay가 일반 웹사이트 호스트 CSS와 격리되고 페이지 클릭을 방해하지 않는다."
+      - "PetState schemaVersion 1이 chrome.storage.local에 저장되고 reload와 tab change 후 복원된다."
+      - "지원 사이트 매트릭스 10곳에서 치명적인 표시 오류나 Extension 오류가 없다."
+    tasks: [TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006]
+    human_gate:
+      required_on_completion: false
+
+  - id: M1
+    name: Living Browser Pet
+    status: planned
+    objective: "Momo가 상호작용 없이도 자연스럽게 쉬고 걷고 주변을 살피는 자율 행동을 완성한다."
+    entry_criteria:
+      - "M0 Runtime Foundation이 완료되어 있다."
+      - "초기 Browser animation set을 사용할 수 있다."
+    exit_criteria:
+      - "Idle, Walk, Sit, Look, Sleep, Groom이 Behavior Engine에서 선택되고 재생된다."
+      - "이동이 viewport 경계와 resize를 지키며 normalized position을 유지한다."
+      - "10분 관찰에서 같은 sequence의 반복이 두드러지지 않는다."
+      - "탭 전환 뒤에도 유효한 행동과 위치로 복귀한다."
+    tasks: []
+    human_gate:
+      required_on_completion: false
+
+  - id: M2
+    name: Direct Interaction
+    status: planned
+    objective: "사용자의 관심에 짧고 읽기 쉽게 반응한 뒤 자율 행동으로 자연스럽게 복귀하게 한다."
+    entry_criteria:
+      - "M1 Living Browser Pet이 완료되어 있다."
+    exit_criteria:
+      - "Pet click, Quick Interaction Bubble, Petting, lightweight Play, Cursor Look이 동작한다."
+      - "상호작용이 웹페이지 클릭을 가로채지 않는다."
+      - "상호작용 종료 후 Autonomous Behavior로 정상 복귀한다."
+    tasks: []
+    human_gate:
+      required_on_completion: false
+
+  - id: M3
+    name: Home and Signature Transition
+    status: planned
+    objective: "한 펫이 Browser World와 Pet Home 사이를 오가는 대표 경험과 기본 돌봄을 완성한다."
+    entry_criteria:
+      - "M2 Direct Interaction이 완료되어 있다."
+      - "Home과 transition에 필요한 최소 에셋을 사용할 수 있다."
+    exit_criteria:
+      - "Room, Door, Bed, Bowl, Toy와 Feed, Play, Rest가 동작한다."
+      - "Call Home과 Send Out이 정의된 presence transition을 따른다."
+      - "전환 중 중복 명령이 무시되고 Browser World와 Home에 펫이 동시에 나타나지 않는다."
+      - "자동 smoke test가 Browser에서 Home까지의 핵심 경로를 통과한다."
+    tasks: []
+    human_gate:
+      required_on_completion: false
+
+  - id: M4
+    name: Virtual Pet Brain
+    status: planned
+    objective: "Needs, Care Tempo, Personality, Relationship을 행동에 연결해 Momo를 움직이는 캐릭터에서 지속되는 Virtual Pet으로 발전시킨다."
+    entry_criteria:
+      - "M3 Home and Signature Transition이 완료되어 있다."
+    exit_criteria:
+      - "elapsed time 기반 Needs와 수면 회복이 결정적으로 계산된다."
+      - "Care Tempo와 Personality가 상태 악화가 아니라 행동 선택의 차이로 드러난다."
+      - "Relationship XP와 stage가 감소 없이 누적되고 행동 unlock을 제어한다."
+      - "Home이 수치 bar 대신 우선순위가 적용된 자연어 상태 한 개를 보여 준다."
+    tasks: []
+    human_gate:
+      required_on_completion: false
+
+  - id: M5
+    name: Ambient Depth and Vertical Slice Validation
+    status: planned
+    objective: "자연스러운 변주와 제품 진입 흐름을 더하고 First Playable이 애착과 호기심을 만드는지 검증한다."
+    entry_criteria:
+      - "M4 Virtual Pet Brain이 완료되어 있다."
+    exit_criteria:
+      - "Onboarding, Momo 선택, Lifestyle 설정이 핵심 흐름을 설명하고 제어한다."
+      - "Long Idle, Rare Behavior, relationship discovery가 반복감을 줄인다."
+      - "지원 사이트 자동 smoke test와 10분 Human Visual QA 기록이 있다."
+      - "사람이 Vertical Slice의 지속 사용 의향과 대표 전환의 자연스러움을 승인한다."
+    tasks: []
+    human_gate:
+      required_on_completion: true

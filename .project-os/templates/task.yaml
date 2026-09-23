@@ -1,0 +1,24 @@
+id: TASK-001
+title: Replace with task title
+role: developer
+milestone: M0
+priority: P1
+status: ready
+
+objective: ""
+why: ""
+
+scope:
+  include: []
+  exclude: []
+
+depends_on: []
+specs: []
+relevant_files: []
+active_decisions: []
+
+acceptance: []
+verification: []
+
+human_gate: false
+risk: low

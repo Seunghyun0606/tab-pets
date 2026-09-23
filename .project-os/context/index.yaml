@@ -1,0 +1,17 @@
+domains:
+  product-direction:
+    paths:
+      - PROJECT.md
+      - specs/product/00-initial-plan.md
+  experience:
+    paths:
+      - specs/ux/experience-flows.md
+  pet-brain:
+    paths:
+      - specs/feature/pet-brain.md
+  runtime:
+    paths:
+      - specs/architecture/runtime-architecture.md
+  assets:
+    paths:
+      - specs/architecture/asset-pipeline.md

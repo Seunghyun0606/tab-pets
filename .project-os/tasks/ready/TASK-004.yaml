@@ -1,0 +1,55 @@
+id: TASK-004
+title: "Build an isolated static Momo overlay"
+role: developer
+milestone: M0
+priority: P0
+status: ready
+
+objective: "일반 웹페이지 아래쪽에 정적 Momo를 안전하게 표시하는 Shadow DOM overlay renderer를 만든다."
+why: "제품 가설을 검증하려면 먼저 임의의 사이트에서 펫이 보이되 host UI와 입력을 방해하지 않는다는 기반을 증명해야 한다."
+
+scope:
+  include:
+    - "Content Script의 idempotent Shadow DOM root 생성과 teardown"
+    - "Momo placeholder 또는 승인된 정적 transparent asset 렌더링"
+    - "viewport bottom activity zone과 normalized X 복원"
+    - "resize bounds clamp"
+    - "container pointer-event passthrough와 Pet hit target 분리"
+    - "host CSS isolation regression tests"
+  exclude:
+    - "sprite animation playback"
+    - "autonomous behavior와 movement"
+    - "Quick Interaction Bubble"
+    - "host DOM collision detection"
+
+depends_on: [TASK-001, TASK-002]
+specs:
+  - "specs/architecture/runtime-architecture.md"
+  - "specs/architecture/asset-pipeline.md"
+  - "specs/ux/experience-flows.md"
+relevant_files:
+  - "src/browser/contentScript.ts"
+  - "src/browser/petLayer.ts"
+  - "src/assets/"
+active_decisions:
+  - ".project-os/decisions/ADR-001-single-pet-state.yaml"
+  - ".project-os/decisions/ADR-002-shadow-dom-overlay.yaml"
+  - ".project-os/decisions/ADR-003-sprite-rendering.yaml"
+context_keys: [runtime, assets, experience]
+
+acceptance:
+  - "Content Script가 중복 실행되어도 Pet root가 하나만 존재한다."
+  - "Momo가 viewport 아래 영역에서 유효한 normalized X 위치에 보인다."
+  - "viewport resize 후 Momo 전체가 화면 경계 안에 남는다."
+  - "host page CSS가 Momo 스타일을 바꾸지 않고 overlay CSS가 host element에 새지 않는다."
+  - "Pet hit area 밖의 클릭, scroll, text selection을 overlay가 막지 않는다."
+  - "페이지 unload와 extension reload 시 observer와 listener가 정리된다."
+verification:
+  - "npm run typecheck"
+  - "npm test -- browser"
+  - "local fixture에서 hostile CSS, click-through, resize, duplicate injection을 자동 검증"
+  - "Chrome의 서로 다른 세 일반 사이트에서 정적 overlay smoke check"
+
+human_gate: false
+risk: high
+
