@@ -1,60 +1,63 @@
 tasks:
-  - id: TASK-001
-    title: "Bootstrap Chrome MV3 extension shell"
-    role: developer
-    milestone: M0
-    priority: P0
-    status: ready
-    depends_on: []
-    human_gate: false
-    contract: ".project-os/tasks/ready/TASK-001.yaml"
-
-  - id: TASK-002
-    title: "Implement PetState v1 persistence"
-    role: developer
-    milestone: M0
-    priority: P0
-    status: ready
-    depends_on: [TASK-001]
-    human_gate: false
-    contract: ".project-os/tasks/ready/TASK-002.yaml"
-
-  - id: TASK-003
-    title: "Build the Side Panel shell and state round-trip"
-    role: developer
-    milestone: M0
-    priority: P1
-    status: ready
-    depends_on: [TASK-001, TASK-002]
-    human_gate: false
-    contract: ".project-os/tasks/ready/TASK-003.yaml"
-
-  - id: TASK-004
-    title: "Build an isolated static Momo overlay"
-    role: developer
-    milestone: M0
-    priority: P0
-    status: ready
-    depends_on: [TASK-001, TASK-002]
-    human_gate: false
-    contract: ".project-os/tasks/ready/TASK-004.yaml"
-
-  - id: TASK-005
-    title: "Integrate and automate the runtime foundation smoke path"
-    role: developer
-    milestone: M0
-    priority: P1
-    status: ready
-    depends_on: [TASK-003, TASK-004]
-    human_gate: false
-    contract: ".project-os/tasks/ready/TASK-005.yaml"
-
-  - id: TASK-006
-    title: "Verify M0 across the supported site matrix"
-    role: qa
-    milestone: M0
-    priority: P1
-    status: ready
-    depends_on: [TASK-005]
-    human_gate: false
-    contract: ".project-os/tasks/ready/TASK-006.yaml"
+- id: TASK-001
+  title: Bootstrap Chrome MV3 extension shell
+  role: developer
+  milestone: M0
+  priority: P0
+  status: active
+  depends_on: []
+  human_gate: false
+  contract: .project-os/tasks/ready/TASK-001.yaml
+- id: TASK-002
+  title: Implement PetState v1 persistence
+  role: developer
+  milestone: M0
+  priority: P0
+  status: ready
+  depends_on:
+  - TASK-001
+  human_gate: false
+  contract: .project-os/tasks/ready/TASK-002.yaml
+- id: TASK-003
+  title: Build the Side Panel shell and state round-trip
+  role: developer
+  milestone: M0
+  priority: P1
+  status: ready
+  depends_on:
+  - TASK-001
+  - TASK-002
+  human_gate: false
+  contract: .project-os/tasks/ready/TASK-003.yaml
+- id: TASK-004
+  title: Build an isolated static Momo overlay
+  role: developer
+  milestone: M0
+  priority: P0
+  status: ready
+  depends_on:
+  - TASK-001
+  - TASK-002
+  human_gate: false
+  contract: .project-os/tasks/ready/TASK-004.yaml
+- id: TASK-005
+  title: Integrate and automate the runtime foundation smoke path
+  role: developer
+  milestone: M0
+  priority: P1
+  status: ready
+  depends_on:
+  - TASK-003
+  - TASK-004
+  human_gate: false
+  contract: .project-os/tasks/ready/TASK-005.yaml
+- id: TASK-006
+  title: Verify M0 across the supported site matrix
+  role: qa
+  milestone: M0
+  priority: P1
+  status: ready
+  depends_on:
+  - TASK-005
+  human_gate: false
+  contract: .project-os/tasks/ready/TASK-006.yaml

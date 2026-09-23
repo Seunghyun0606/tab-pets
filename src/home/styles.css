@@ -1,0 +1,38 @@
+:root {
+  color: #352e2a;
+  background: #f7f0e5;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  min-width: 280px;
+  margin: 0;
+}
+
+.home-shell {
+  display: grid;
+  min-height: 100vh;
+  box-sizing: border-box;
+  align-content: center;
+  padding: 32px 24px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #806f63;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1,
+.message {
+  margin: 0;
+}
+
+.message {
+  margin-top: 12px;
+  color: #665951;
+}
+

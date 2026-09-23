@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Pets",
+  "description": "A small companion that quietly lives alongside your browser.",
+  "version": "0.0.1",
+  "minimum_chrome_version": "114",
+  "permissions": ["sidePanel"],
+  "background": {
+    "service_worker": "background/serviceWorker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Open Tab Pets home"
+  },
+  "side_panel": {
+    "default_path": "home/index.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["browser/contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
+
