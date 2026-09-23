@@ -1,0 +1,20 @@
+task: TASK-001
+status: pass
+summary: TASK-001 satisfies its acceptance criteria with a passing implementation
+  handoff, automated verification evidence, and an independent review reporting zero
+  critical issues.
+files_changed: []
+verification:
+  implementation_result: pass
+  automated_test_result: pass
+  independent_review: pass
+  critical_issues: 0
+followups: []
+decision: PASS
+quality:
+  passed: true
+  missing: []
+  failed: []
+kind: evaluation
+role: evaluator
+actor: codex-evaluator

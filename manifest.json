@@ -4,7 +4,7 @@
   "description": "A small companion that quietly lives alongside your browser.",
   "version": "0.0.1",
   "minimum_chrome_version": "114",
-  "permissions": ["sidePanel"],
+  "permissions": ["sidePanel", "storage"],
   "background": {
     "service_worker": "background/serviceWorker.js",
     "type": "module"
@@ -23,4 +23,3 @@
     }
   ]
 }
-

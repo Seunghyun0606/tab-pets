@@ -32,11 +32,10 @@ describe('extension shell manifest', () => {
     ]);
   });
 
-  it('keeps API permissions limited to the side panel shell', async () => {
+  it('keeps API permissions limited to the side panel and pet persistence', async () => {
     const manifest = await readManifest();
 
-    expect(manifest.permissions).toEqual(['sidePanel']);
+    expect(manifest.permissions).toEqual(['sidePanel', 'storage']);
     expect(manifest.action?.default_title).toBe('Open Tab Pets home');
   });
 });
-

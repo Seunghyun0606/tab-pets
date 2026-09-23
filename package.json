@@ -9,6 +9,7 @@
   "scripts": {
     "clean": "node scripts/clean.mjs",
     "build": "node scripts/build.mjs",
+    "smoke:storage": "node scripts/chrome-storage-smoke.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run"
