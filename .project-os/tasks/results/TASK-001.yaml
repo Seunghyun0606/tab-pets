@@ -1,0 +1,34 @@
+task: TASK-001
+status: pass
+summary: Bootstrapped a minimal TypeScript Chrome MV3 extension shell with Service
+  Worker, Content Script, Side Panel, deterministic esbuild output, lint/typecheck/test
+  commands, and documented unpacked-extension setup.
+files_changed:
+- .gitattributes
+- .gitignore
+- README.md
+- eslint.config.js
+- manifest.json
+- package.json
+- package-lock.json
+- scripts/build.mjs
+- scripts/clean.mjs
+- src/background/serviceWorker.ts
+- src/browser/contentScript.ts
+- src/home/index.html
+- src/home/main.ts
+- src/home/styles.css
+- tests/shell.test.ts
+- tsconfig.json
+evidence:
+- Production build validates that every manifest entry path exists.
+- Chrome pack-extension accepted the generated dist without manifest errors.
+- API permissions are limited to sidePanel; HTTP(S) matches are declared only for
+  the required Content Script.
+followups:
+- Independent review should perform the visible Chrome unpacked-load and toolbar Side
+  Panel smoke check because Windows UI control was unavailable in this run.
+commit: 2d6e677
+kind: implementation
+role: developer
+actor: codex-dev
