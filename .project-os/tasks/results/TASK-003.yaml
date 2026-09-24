@@ -1,0 +1,28 @@
+task: TASK-003
+status: pass
+summary: Implemented a Side Panel Home shell that hydrates the shared persistent Momo
+  state, shows explicit loading and error states, follows local storage changes without
+  stale async renders, and cleans up its listener when the panel document is discarded.
+files_changed:
+- package.json
+- scripts/chrome-home-smoke.mjs
+- src/home/app.ts
+- src/home/main.ts
+- src/home/styles.css
+- tests/home.test.ts
+- tests/shell.test.ts
+verification:
+  typecheck: pass
+  lint: pass
+  home_unit_test: pass (4 tests)
+  full_unit_test: pass (4 files, 18 tests)
+  production_build: pass
+  chrome_home_smoke: pass (Side Panel path, action-click behavior, initial hydration,
+    live external storage update, close, and reopen hydration)
+review: null
+followups:
+- Independent review and evaluation are still required by the standard quality profile.
+commit: null
+kind: implementation
+role: developer
+actor: codex-dev

@@ -30,7 +30,7 @@ verification:
 review: null
 followups:
 - Independent review and evaluation are still required by the standard quality profile.
-commit: null
+commit: 05c8bb8
 kind: implementation
 role: developer
 actor: codex-dev

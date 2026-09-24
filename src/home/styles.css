@@ -2,6 +2,7 @@
   color: #352e2a;
   background: #f7f0e5;
   font-family: system-ui, sans-serif;
+  color-scheme: light;
 }
 
 body {
@@ -15,6 +16,9 @@ body {
   box-sizing: border-box;
   align-content: center;
   padding: 32px 24px;
+  background:
+    radial-gradient(circle at 80% 18%, rgb(255 255 255 / 65%), transparent 28%),
+    #f7f0e5;
 }
 
 .eyebrow {
@@ -34,5 +38,43 @@ h1,
 .message {
   margin-top: 12px;
   color: #665951;
+  line-height: 1.55;
 }
 
+.state-card {
+  display: grid;
+  gap: 10px;
+  margin: 28px 0 0;
+  padding: 16px;
+  border: 1px solid rgb(128 111 99 / 18%);
+  border-radius: 18px;
+  background: rgb(255 255 255 / 58%);
+  box-shadow: 0 12px 30px rgb(87 67 52 / 8%);
+}
+
+.state-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+dt,
+dd {
+  margin: 0;
+}
+
+dt {
+  color: #806f63;
+  font-size: 0.8rem;
+}
+
+dd {
+  font-size: 0.85rem;
+  font-weight: 650;
+  text-align: right;
+}
+
+.is-error .message {
+  color: #8d3f3f;
+}

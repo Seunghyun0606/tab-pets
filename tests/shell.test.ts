@@ -53,4 +53,14 @@ describe('extension shell manifest', () => {
       },
     ]);
   });
+
+  it('provides a repeatable Side Panel hydration smoke command', async () => {
+    const packageJson = JSON.parse(
+      await readFile(resolve(import.meta.dirname, '..', 'package.json'), 'utf8'),
+    ) as { scripts?: Record<string, string> };
+
+    expect(packageJson.scripts?.['smoke:home']).toBe(
+      'node scripts/chrome-home-smoke.mjs',
+    );
+  });
 });
