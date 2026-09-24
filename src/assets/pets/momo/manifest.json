@@ -1,0 +1,9 @@
+{
+  "id": "idle-placeholder",
+  "frames": 1,
+  "fps": 1,
+  "loop": true,
+  "baseline": 220,
+  "placeholder": true,
+  "browser": "browser/idle-placeholder.webp"
+}

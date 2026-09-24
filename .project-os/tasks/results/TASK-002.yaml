@@ -26,7 +26,7 @@ evidence:
 - 'projectctl doctor: pass'
 followups:
 - Independent review and evaluation are still required by the standard quality profile.
-commit: null
+commit: 6b893f7
 kind: implementation
 role: developer
 actor: codex-dev

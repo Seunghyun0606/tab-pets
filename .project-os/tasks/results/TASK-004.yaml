@@ -1,0 +1,36 @@
+task: TASK-004
+status: pass
+summary: Implemented an idempotent Shadow DOM Browser World layer that renders the
+  static Momo placeholder at a persisted normalized position, clamps it through viewport
+  resizes, isolates host and pet styles, passes page input through outside the pet
+  hit target, and cleans up on page unload or extension context invalidation without
+  mistaking normal MV3 service-worker suspension for an extension reload.
+files_changed:
+- manifest.json
+- package.json
+- scripts/build.mjs
+- scripts/chrome-overlay-smoke.mjs
+- src/assets/pets/momo/manifest.json
+- src/assets/pets/momo/browser/idle-placeholder.webp
+- src/browser/contentScript.ts
+- src/browser/lifecycle.ts
+- src/browser/petLayer.ts
+- tests/browser.test.ts
+- tests/shell.test.ts
+verification:
+  typecheck: pass
+  lint: pass
+  browser_unit_test: pass (3 tests)
+  full_unit_test: pass (3 files, 13 tests)
+  production_build: pass
+  chrome_overlay_smoke: pass (hostile CSS isolation, click/scroll/text-selection pass-through,
+    worker idle survival, duplicate injection, narrow resize bounds, pagehide teardown,
+    real extension reload teardown, and three general sites)
+  projectctl_doctor: pass
+review: null
+followups:
+- Independent review and evaluation are still required by the standard quality profile.
+commit: null
+kind: implementation
+role: developer
+actor: codex-dev

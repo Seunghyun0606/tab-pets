@@ -21,5 +21,11 @@
       "js": ["browser/contentScript.js"],
       "run_at": "document_idle"
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/pets/momo/browser/*.webp"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
   ]
 }

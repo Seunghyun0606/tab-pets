@@ -45,6 +45,7 @@ await Promise.all([
 
 await Promise.all([
   cp(fromRoot('manifest.json'), fromOutput('manifest.json')),
+  cp(fromRoot('src/assets'), fromOutput('assets'), { recursive: true }),
   cp(fromRoot('src/home/index.html'), fromOutput('home/index.html')),
   cp(fromRoot('src/home/styles.css'), fromOutput('home/styles.css')),
 ]);
@@ -69,4 +70,3 @@ await Promise.all(
     }
   }),
 );
-

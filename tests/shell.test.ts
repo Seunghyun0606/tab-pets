@@ -10,6 +10,10 @@ interface ExtensionManifest {
   manifest_version?: number;
   permissions?: string[];
   side_panel?: { default_path?: string };
+  web_accessible_resources?: Array<{
+    matches?: string[];
+    resources?: string[];
+  }>;
 }
 
 const readManifest = async (): Promise<ExtensionManifest> => {
@@ -37,5 +41,16 @@ describe('extension shell manifest', () => {
 
     expect(manifest.permissions).toEqual(['sidePanel', 'storage']);
     expect(manifest.action?.default_title).toBe('Open Tab Pets home');
+  });
+
+  it('exposes only the browser sprite asset to matched web pages', async () => {
+    const manifest = await readManifest();
+
+    expect(manifest.web_accessible_resources).toEqual([
+      {
+        resources: ['assets/pets/momo/browser/*.webp'],
+        matches: ['http://*/*', 'https://*/*'],
+      },
+    ]);
   });
 });
