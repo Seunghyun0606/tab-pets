@@ -1,0 +1,39 @@
+task: TASK-005
+status: pass
+summary: Integrated typed PetState request and update wiring across the service worker,
+  Browser World, and Home. Added one deterministic CDP smoke command that builds the
+  production extension, loads a local fixture, verifies a visible single overlay and
+  Home hydration, persists identity and normalized position through extension and
+  page reload, and fails on unexpected page or extension diagnostics.
+files_changed:
+- package.json
+- scripts/test-e2e.mjs
+- scripts/chrome-foundation-e2e.mjs
+- src/messaging/messages.ts
+- src/messaging/bus.ts
+- src/background/petMessageHandler.ts
+- src/background/serviceWorker.ts
+- src/browser/contentScript.ts
+- src/home/app.ts
+- src/home/main.ts
+- tests/messaging.test.ts
+verification:
+  acceptance: pass
+  build: pass
+  typecheck: pass
+  lint: pass
+  unit_test: pass (5 files, 21 tests)
+  integration_test: pass
+  test_e2e: pass (extension load, one visible overlay, Home hydrate, live position,
+    runtime reload teardown and worker monitoring, same-profile restart, page reload,
+    identity and position restore)
+  diagnostic_negative_control: pass (injected page console error and extension uncaught
+    exception made the E2E command fail with both diagnostics)
+  projectctl_doctor: pass
+review: null
+followups:
+- Independent review and evaluation remain required by the standard quality profile.
+commit: 28414b7
+kind: implementation
+role: developer
+actor: codex-dev

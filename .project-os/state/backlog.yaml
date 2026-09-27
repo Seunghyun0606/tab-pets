@@ -45,7 +45,7 @@ tasks:
   role: developer
   milestone: M0
   priority: P1
-  status: active
+  status: done
   depends_on:
   - TASK-003
   - TASK-004
