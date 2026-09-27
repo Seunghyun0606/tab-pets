@@ -18,19 +18,21 @@ files_changed:
 - tests/browser.test.ts
 - tests/shell.test.ts
 verification:
+  acceptance: pass
   typecheck: pass
   lint: pass
   browser_unit_test: pass (3 tests)
   full_unit_test: pass (3 files, 13 tests)
   production_build: pass
-  chrome_overlay_smoke: pass (hostile CSS isolation, click/scroll/text-selection pass-through,
-    worker idle survival, duplicate injection, narrow resize bounds, pagehide teardown,
-    real extension reload teardown, and three general sites)
+  chrome_overlay_smoke: pass (page-owned ID collision preservation, hostile CSS isolation,
+    click/scroll/text-selection pass-through, worker idle survival, duplicate injection,
+    narrow resize bounds, pagehide teardown, real extension reload teardown, and three
+    general sites)
   projectctl_doctor: pass
 review: null
 followups:
 - Independent review and evaluation are still required by the standard quality profile.
-commit: 05c8bb8
+commit: 3c9d736
 kind: implementation
 role: developer
 actor: codex-dev
