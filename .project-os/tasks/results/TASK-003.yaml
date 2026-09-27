@@ -12,6 +12,7 @@ files_changed:
 - tests/home.test.ts
 - tests/shell.test.ts
 verification:
+  acceptance: pass
   typecheck: pass
   lint: pass
   home_unit_test: pass (4 tests)
