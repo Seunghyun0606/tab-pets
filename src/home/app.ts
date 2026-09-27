@@ -27,7 +27,7 @@ export interface HomeApp {
 export interface HomeAppOptions {
   onError?: (error: unknown) => void;
   storageChanges: StorageChangeSource;
-  store: PetStore;
+  store: Pick<PetStore, 'load'>;
   view: HomeView;
 }
 

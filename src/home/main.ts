@@ -1,5 +1,5 @@
 import { createDomHomeView, mountHomeApp } from './app';
-import { createPetStore } from '../pet/state/petStore';
+import { requestPetState } from '../messaging/bus';
 
 const root = document.querySelector<HTMLElement>('#app');
 
@@ -12,7 +12,7 @@ const app = mountHomeApp({
     console.error('Tab Pets home could not load PetState.', error);
   },
   storageChanges: chrome.storage.onChanged,
-  store: createPetStore(),
+  store: { load: requestPetState },
   view: createDomHomeView(root),
 });
 
