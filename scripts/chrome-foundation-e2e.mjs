@@ -75,7 +75,7 @@ const findChrome = async () => {
   throw new Error('No Chrome or Chromium executable was found.');
 };
 
-const launchChrome = (chromePath, fixtureUrl) =>
+const launchChrome = (chromePath) =>
   spawn(chromePath, [
     '--headless=new',
     '--disable-gpu',
@@ -86,7 +86,7 @@ const launchChrome = (chromePath, fixtureUrl) =>
     `--disable-extensions-except=${extensionPath}`,
     `--load-extension=${extensionPath}`,
     '--window-size=1000,800',
-    fixtureUrl,
+    'about:blank',
   ], { stdio: 'ignore', windowsHide: true });
 
 const stopChrome = (child) => {
@@ -184,7 +184,7 @@ try {
   }
   const fixtureUrl = `http://127.0.0.1:${address.port}/fixture`;
   const chromePath = await findChrome();
-  chrome = launchChrome(chromePath, fixtureUrl);
+  chrome = launchChrome(chromePath);
 
   const getDebuggerPort = () => waitFor(async () => {
     const contents = await readFile(resolve(profilePath, 'DevToolsActivePort'), 'utf8');
@@ -197,7 +197,7 @@ try {
   const extensionId = await waitFor(getExtensionId, 'extension id');
   const pageTarget = await waitFor(async () =>
     (await listTargets()).find((target) =>
-      target.type === 'page' && target.url.startsWith(fixtureUrl)),
+      target.type === 'page' && target.url === 'about:blank'),
   'fixture page target');
   let page = await createClient(pageTarget, 'page', diagnostics);
   clients.push(page);
@@ -209,6 +209,7 @@ try {
   'extension service worker');
   const worker = await createClient(workerTarget, 'service worker', diagnostics);
   clients.push(worker);
+  await page.send('Page.navigate', { url: fixtureUrl });
 
   const homeUrl = `chrome-extension://${extensionId}/home/index.html`;
   const homeTarget = await (await fetch(
@@ -272,25 +273,46 @@ try {
     return Math.abs(overlay.x - expectedLeft) < 1 ? overlay : undefined;
   }, 'live normalized position update');
 
-  // Reloading the extension invalidates its prior content-script context.
+  // Headless Chrome invalidates the old extension context on runtime.reload().
+  // Watch for a replacement worker while the runtime reload is in progress.
+  let reloadWorkerTargets = 0;
+  const monitorReload = (async () => {
+    const observed = new Set([workerTarget.id]);
+    for (let attempt = 0; attempt < 70; attempt += 1) {
+      for (const target of await listTargets()) {
+        if (target.type !== 'service_worker' ||
+            target.url !== `chrome-extension://${extensionId}/background/serviceWorker.js` ||
+            observed.has(target.id)) continue;
+        observed.add(target.id);
+        clients.push(await createClient(target, 'worker after runtime reload', diagnostics));
+        reloadWorkerTargets += 1;
+      }
+      await delay(100);
+    }
+  })().catch((error) => {
+    diagnostics.push(`runtime reload monitor: ${String(error)}`);
+  });
   void home.send('Runtime.evaluate', {
     expression: 'chrome.runtime.reload(); true',
     returnByValue: true,
   }).catch(() => undefined);
   await waitFor(async () => (await readOverlay()).count === 0,
-    'overlay teardown after extension reload');
+    'overlay teardown after runtime reload');
+  await monitorReload;
 
+  // This headless run does not start a replacement worker until the same-profile
+  // browser restart. A worker that does appear above is attached and monitored.
   for (const client of clients) client.socket.close();
   clients.length = 0;
   stopChrome(chrome);
   chrome = undefined;
   await rm(resolve(profilePath, 'DevToolsActivePort'), { force: true });
   await delay(250);
-  chrome = launchChrome(chromePath, fixtureUrl);
+  chrome = launchChrome(chromePath);
   port = await getDebuggerPort();
   const restartedPageTarget = await waitFor(async () =>
     (await listTargets()).find((target) =>
-      target.type === 'page' && target.url.startsWith(fixtureUrl)),
+      target.type === 'page' && target.url === 'about:blank'),
   'fixture page after extension reload');
   page = await createClient(restartedPageTarget, 'reloaded page', diagnostics);
   clients.push(page);
@@ -301,6 +323,7 @@ try {
       target.url === `chrome-extension://${extensionId}/background/serviceWorker.js`),
   'service worker after extension reload');
   clients.push(await createClient(restartedWorkerTarget, 'reloaded service worker', diagnostics));
+  await page.send('Page.navigate', { url: fixtureUrl });
 
   const reopenedTarget = await (await fetch(
     `http://127.0.0.1:${port}/json/new?${encodeURIComponent(homeUrl)}`,
@@ -336,7 +359,7 @@ try {
     throw new Error(`Unexpected browser diagnostics: ${diagnostics.join(' | ')}`);
   }
   console.log(
-    `Runtime foundation E2E passed (extension, one overlay, Home, identity=${restored.stored.identity.id}, normalizedX=${expectedX}, reload, no console errors).`,
+    `Runtime foundation E2E passed (extension, one overlay, Home, identity=${restored.stored.identity.id}, normalizedX=${expectedX}, runtime reload, reload workers=${reloadWorkerTargets}, same-profile restart, page reload, no console errors).`,
   );
 } finally {
   for (const client of clients) client.socket.close();
