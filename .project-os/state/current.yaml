@@ -1,7 +1,6 @@
 project_status: active
 current_milestone: M0
-current_tasks:
-- TASK-004
+current_tasks: []
 blocked_tasks: []
 human_gate: false
 updated_at: '2026-09-24'
