@@ -12,6 +12,7 @@
     "smoke:home": "node scripts/chrome-home-smoke.mjs",
     "smoke:overlay": "node scripts/chrome-overlay-smoke.mjs",
     "smoke:storage": "node scripts/chrome-storage-smoke.mjs",
+    "qa:sites": "node scripts/chrome-site-matrix.mjs",
     "test:e2e": "node scripts/test-e2e.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

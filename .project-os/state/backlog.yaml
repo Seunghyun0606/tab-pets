@@ -56,7 +56,7 @@ tasks:
   role: qa
   milestone: M0
   priority: P1
-  status: ready
+  status: active
   depends_on:
   - TASK-005
   human_gate: false
