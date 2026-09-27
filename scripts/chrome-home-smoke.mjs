@@ -198,6 +198,14 @@ try {
       : undefined;
   }, 'Side Panel action configuration');
 
+  const openedWindowId = await panelClient.evaluate(
+    `chrome.windows.getCurrent().then(({ id }) => {
+      if (id === undefined) throw new Error('Current Chrome window has no id.');
+      return chrome.sidePanel.open({ windowId: id }).then(() => id);
+    })`,
+    true,
+  );
+
   const initial = await waitFor(async () => {
     const value = await panelClient.evaluate(`(() => ({
       busy: document.querySelector('main')?.getAttribute('aria-busy'),
@@ -250,7 +258,7 @@ try {
   }, 'reopened Home hydration');
 
   console.log(
-    `Chrome Home smoke passed (path=${configuration.options.path}, action=${configuration.behavior.openPanelOnActionClick}, initial=${initial.presence}, updated=${updated.presence}, reopened=${reopened.view.presence}).`,
+    `Chrome Home smoke passed (path=${configuration.options.path}, action=${configuration.behavior.openPanelOnActionClick}, openedWindow=${openedWindowId}, initial=${initial.presence}, updated=${updated.presence}, reopened=${reopened.view.presence}).`,
   );
 } finally {
   panelClient?.socket.close();
