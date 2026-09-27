@@ -44,6 +44,9 @@ const fixture = `<!doctype html>
     </style>
   </head>
   <body>
+    <section id="tab-pets-root" data-host-owner="page">
+      Page content with an extension-like id must survive.
+    </section>
     <button id="underlay" type="button">Page button</button>
     <p id="selectable">This page text must remain selectable beneath the overlay.</p>
     <div id="momo-hit-target">Host probe</div>
@@ -272,7 +275,9 @@ try {
     waitFor(
       () =>
         evaluate(`(() => {
-          const host = document.querySelector('#tab-pets-root');
+          const host = document.querySelector(
+            'tab-pets-root[data-tab-pets-runtime]',
+          );
           const image = host?.shadowRoot?.querySelector('#momo-sprite');
           return Boolean(host && image?.complete && image.naturalWidth > 0);
         })()`),
@@ -286,7 +291,9 @@ try {
     const state = await evaluate(`({
       href: location.href,
       readyState: document.readyState,
-      rootCount: document.querySelectorAll('#tab-pets-root').length
+      rootCount: document.querySelectorAll(
+        'tab-pets-root[data-tab-pets-runtime]'
+      ).length
     })`);
     const isolatedWorlds = [];
     for (const context of client.contexts.values()) {
@@ -297,7 +304,9 @@ try {
           probe: await evaluate(`({
             runtimeId: typeof chrome !== 'undefined' && chrome.runtime?.id,
             storageAvailable: typeof chrome !== 'undefined' && Boolean(chrome.storage?.local),
-            rootCount: document.querySelectorAll('#tab-pets-root').length
+            rootCount: document.querySelectorAll(
+              'tab-pets-root[data-tab-pets-runtime]'
+            ).length
           })`, context.id),
         });
       } catch (probeError) {
@@ -316,19 +325,27 @@ try {
   }
 
   const isolation = await evaluate(`(() => {
-    const host = document.querySelector('#tab-pets-root');
+    const host = document.querySelector(
+      'tab-pets-root[data-tab-pets-runtime]'
+    );
     const target = host.shadowRoot.querySelector('#momo-hit-target');
     const hostProbe = document.querySelector('body > #momo-hit-target');
     const hostStyle = getComputedStyle(host);
     const targetStyle = getComputedStyle(target);
     const rect = target.getBoundingClientRect();
     return {
-      count: document.querySelectorAll('#tab-pets-root').length,
+      count: document.querySelectorAll(
+        'tab-pets-root[data-tab-pets-runtime]'
+      ).length,
       hostDisplay: hostStyle.display,
+      hostIdAvoidedCollision: host.id !== 'tab-pets-root',
       hostPointerEvents: hostStyle.pointerEvents,
       hostPosition: hostStyle.position,
       hostVisibility: hostStyle.visibility,
       probeWidth: getComputedStyle(hostProbe).width,
+      pageHostPreserved: document.querySelector(
+        '#tab-pets-root[data-host-owner="page"]'
+      )?.textContent.includes('must survive') === true,
       targetPointerEvents: targetStyle.pointerEvents,
       targetWidth: rect.width,
     };
@@ -336,10 +353,12 @@ try {
   if (
     isolation.count !== 1 ||
     isolation.hostDisplay !== 'block' ||
+    !isolation.hostIdAvoidedCollision ||
     isolation.hostPointerEvents !== 'none' ||
     isolation.hostPosition !== 'fixed' ||
     isolation.hostVisibility !== 'visible' ||
     isolation.probeWidth !== '31px' ||
+    !isolation.pageHostPreserved ||
     isolation.targetPointerEvents !== 'auto' ||
     isolation.targetWidth !== 96
   ) {
@@ -432,7 +451,9 @@ try {
   );
   await evaluate(bundle, extensionContextId);
   await delay(100);
-  if ((await evaluate("document.querySelectorAll('#tab-pets-root').length")) !== 1) {
+  if ((await evaluate(`document.querySelectorAll(
+    'tab-pets-root[data-tab-pets-runtime]'
+  ).length`)) !== 1) {
     throw new Error('Duplicate Content Script execution created another pet root.');
   }
 
@@ -444,7 +465,9 @@ try {
   });
   const boundsAreValid = await waitFor(() =>
     evaluate(`(() => {
-      const target = document.querySelector('#tab-pets-root')
+      const target = document.querySelector(
+        'tab-pets-root[data-tab-pets-runtime]'
+      )
         .shadowRoot.querySelector('#momo-hit-target');
       const rect = target.getBoundingClientRect();
       return rect.left >= 0 && rect.right <= innerWidth && rect.top >= 0 &&
@@ -456,7 +479,9 @@ try {
 
   await evaluate("dispatchEvent(new PageTransitionEvent('pagehide'))");
   await waitFor(
-    () => evaluate("!document.querySelector('#tab-pets-root')"),
+    () => evaluate(
+      "!document.querySelector('tab-pets-root[data-tab-pets-runtime]')",
+    ),
     'pagehide overlay teardown',
   );
   await client.send('Page.reload', { ignoreCache: true });
@@ -477,7 +502,9 @@ try {
     await waitForOverlay(`Momo overlay on ${site}`);
   }
 
-  await evaluate(`document.querySelector('#tab-pets-root')
+  await evaluate(`document.querySelector(
+      'tab-pets-root[data-tab-pets-runtime]'
+    )
     .setAttribute('data-smoke-generation', 'before-extension-reload')`);
   const extensionPageUrl = `chrome-extension://${extensionId}/home/index.html`;
   const extensionReloadTarget = await (
@@ -504,7 +531,7 @@ try {
   );
 
   console.log(
-    'Chrome overlay smoke passed (isolation, pass-through, worker idle, duplicate injection, resize, page and extension teardown, 3 sites).',
+    'Chrome overlay smoke passed (host-id collision preservation, isolation, pass-through, worker idle, duplicate injection, resize, page and extension teardown, 3 sites).',
   );
 } finally {
   extensionReloadClient?.socket.close();

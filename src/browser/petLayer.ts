@@ -89,6 +89,19 @@ const setImportantStyle = (
   element.style.setProperty(property, value, 'important');
 };
 
+const getAvailableHostId = (
+  document: Document,
+  runtimeId: string,
+): string => {
+  let candidate = PET_LAYER_HOST_ID;
+  let collision = 0;
+  while (document.getElementById(candidate) !== null) {
+    collision += 1;
+    candidate = `${PET_LAYER_HOST_ID}-${runtimeId}-${collision}`;
+  }
+  return candidate;
+};
+
 const isolateHost = (host: HTMLElement): void => {
   const styles: ReadonlyArray<readonly [string, string]> = [
     ['all', 'initial'],
@@ -194,10 +207,10 @@ export const mountPetLayer = (options: PetLayerOptions): PetLayer => {
     return { ...registered, created: false };
   }
 
-  document.getElementById(PET_LAYER_HOST_ID)?.remove();
+  registered?.destroy();
 
   const host = document.createElement('tab-pets-root');
-  host.id = PET_LAYER_HOST_ID;
+  host.id = getAvailableHostId(document, options.runtimeId);
   host.dataset.tabPetsRuntime = options.runtimeId;
   isolateHost(host);
 
