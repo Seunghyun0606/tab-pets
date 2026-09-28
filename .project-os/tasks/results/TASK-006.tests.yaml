@@ -1,0 +1,92 @@
+task: TASK-006
+status: fail
+summary: M0 build, unit, and lint checks passed; E2E passed twice after one position-update
+  timeout. The live-site matrix passed 9 of 10 public destinations for a visible isolated
+  overlay, host click and wheel, text selection, viewport resize, and tab-change state
+  restore. Native page text selection was observed on seven sites, and real editable
+  controls received focus on Google, YouTube, and Wikipedia. Reddit served a JS anti-bot
+  challenge instead of public content, so the 10/10 criterion remains unverified.
+files_changed:
+- scripts/chrome-site-matrix.mjs
+verification:
+  build: pass
+  typecheck: pass
+  lint: pass
+  unit_test: pass (5 files, 21 tests)
+  test_e2e: intermittent (first live position update timeout; next two runs passed)
+  site_matrix: fail (9 pass, 1 site challenge)
+  native_page_text_selection: pass on GitHub, YouTube, Notion, Wikipedia, MDN, IANA,
+    W3C
+  native_editable_focus: pass on Google, YouTube, Wikipedia
+  tab_change: pass
+  extension_diagnostics: pass (0 errors)
+  page_console_diagnostics: 4 page-origin errors observed; no extension attribution
+matrix:
+- site: Google Search
+  url: https://www.google.com/
+  status: pass
+  native_interaction: search input focused
+  limitation: Search results and native search submission were not exercised.
+- site: GitHub
+  url: https://github.com/
+  status: pass
+  native_interaction: visible text selected
+- site: YouTube
+  url: https://www.youtube.com/
+  status: pass
+  native_interaction: visible text selected and search input focused
+  limitation: Video playback was not exercised.
+- site: Reddit
+  url: https://www.reddit.com/
+  status: blocked
+  reason: JS anti-bot challenge was served to headless Chrome.
+- site: Notion public help
+  url: https://www.notion.so/help
+  status: pass
+  native_interaction: visible text selected
+- site: Wikipedia
+  url: https://en.wikipedia.org/wiki/Cat
+  status: pass
+  native_interaction: visible text selected and search input focused
+- site: MDN
+  url: https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot
+  status: pass
+  native_interaction: visible text selected
+- site: BBC News
+  url: https://www.bbc.com/news
+  status: pass
+  native_interaction: real page wheel scroll only
+  limitation: No suitable native text or editable target was found by the current
+    probe.
+- site: IANA
+  url: https://www.iana.org/domains/reserved
+  status: pass
+  native_interaction: visible text selected
+- site: W3C
+  url: https://www.w3.org/TR/css-scoping-1/
+  status: pass
+  native_interaction: visible text selected
+findings:
+- severity: medium
+  issue: Runtime foundation E2E timed out once waiting for live normalized position
+    update.
+  reproduce: Run npm run test:e2e repeatedly; the first of three runs in this QA session
+    failed at chrome-foundation-e2e.mjs line 270 and the next two passed.
+  followup: Capture stored PetState and overlay position on timeout, then isolate
+    product versus harness timing if it recurs.
+- severity: medium
+  issue: Reddit compatibility remains unverified due to site anti-bot challenge.
+  reproduce: Run npm run qa:sites; inspect Reddit site_challenge result.
+  followup: Retry in an authorized interactive Chrome environment with public content
+    accessible.
+- severity: low
+  issue: Native primary workflows are not established on every site.
+  reproduce: Inspect nativeInteraction fields in npm run qa:sites output.
+  followup: Add safe per-site native workflow checks before TASK-006 completion.
+critical_issues: 0
+followups:
+- Keep TASK-006 active until Reddit public content and native primary workflows are
+  verified.
+kind: test
+role: qa
+actor: codex-qa-task006

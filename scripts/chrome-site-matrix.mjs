@@ -403,6 +403,80 @@ try {
     }
     await page.evaluate("document.querySelector('#tab-pets-qa-probe')?.remove()");
 
+    stage = 'native_page_interaction';
+    const nativeTargets = await page.evaluate(`(() => {
+      const inViewport = (rect) => rect.width > 4 && rect.height > 4 &&
+        rect.left >= 0 && rect.top >= 0 && rect.right <= innerWidth &&
+        rect.bottom <= innerHeight;
+      const onTop = (element, rect) => {
+        const top = document.elementFromPoint(
+          rect.left + Math.min(8, rect.width / 2),
+          rect.top + rect.height / 2,
+        );
+        return top === element || element.contains(top);
+      };
+      let text;
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const parent = node.parentElement;
+        if (!parent || !node.textContent?.trim() ||
+            node.textContent.trim().length < 8 ||
+            parent.closest('a,button,label,[contenteditable],tab-pets-root')) continue;
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        const rect = range.getBoundingClientRect();
+        if (inViewport(rect) && onTop(parent, rect)) {
+          text = {
+            x: rect.left + Math.min(8, rect.width / 2),
+            y: rect.top + rect.height / 2,
+            sample: node.textContent.trim().slice(0, 40),
+          };
+          break;
+        }
+      }
+      let editable;
+      for (const element of document.querySelectorAll(
+        'input:not([type=hidden]),textarea,[contenteditable="true"]',
+      )) {
+        const rect = element.getBoundingClientRect();
+        if (inViewport(rect) && onTop(element, rect) && !element.disabled) {
+          editable = {
+            x: rect.left + Math.min(8, rect.width / 2),
+            y: rect.top + rect.height / 2,
+            tag: element.tagName,
+          };
+          break;
+        }
+      }
+      return { text, editable };
+    })()`);
+    const nativeInteraction = {
+      textTargetFound: Boolean(nativeTargets.text),
+      editableTargetFound: Boolean(nativeTargets.editable),
+    };
+    if (nativeTargets.text) {
+      await page.evaluate('getSelection().removeAllRanges()');
+      await page.send('Input.dispatchMouseEvent', {
+        type: 'mousePressed', x: nativeTargets.text.x, y: nativeTargets.text.y,
+        button: 'left', buttons: 1, clickCount: 2,
+      });
+      await page.send('Input.dispatchMouseEvent', {
+        type: 'mouseReleased', x: nativeTargets.text.x, y: nativeTargets.text.y,
+        button: 'left', buttons: 0, clickCount: 2,
+      });
+      nativeInteraction.selectedLength = await page.evaluate(
+        'getSelection().toString().length',
+      );
+    }
+    if (nativeTargets.editable) {
+      await dispatchClick(nativeTargets.editable.x, nativeTargets.editable.y);
+      nativeInteraction.editableFocused = await page.evaluate(`(() => {
+        const active = document.activeElement;
+        return active?.matches('input,textarea,[contenteditable="true"]') ?? false;
+      })()`);
+    }
+
     stage = 'resize';
     await page.send('Emulation.setDeviceMetricsOverride', {
       deviceScaleFactor: 1, height: 240, mobile: false, width: 320,
@@ -442,6 +516,7 @@ try {
         resized,
       },
       interaction,
+      nativeInteraction,
       extensionErrors: siteErrors,
       pageConsoleErrors: pageErrors.slice(pageErrorStart).length,
     });
