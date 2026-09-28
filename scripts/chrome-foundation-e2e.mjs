@@ -194,6 +194,12 @@ try {
   let port = await getDebuggerPort();
   const listTargets = async () =>
     (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json());
+  const activatePage = async (targetId) => {
+    const response = await fetch(`http://127.0.0.1:${port}/json/activate/${targetId}`);
+    if (!response.ok) {
+      throw new Error(`Could not activate fixture page: HTTP ${response.status}`);
+    }
+  };
   const extensionId = await waitFor(getExtensionId, 'extension id');
   const pageTarget = await waitFor(async () =>
     (await listTargets()).find((target) =>
@@ -254,6 +260,9 @@ try {
       value.heading === "Momo's home" && value.presence === 'ROAMING'
       ? value : undefined;
   }, 'shared state request and Home hydration');
+  // Keep the fixture page foregrounded while checking live rendering. Opening
+  // Home as a tab otherwise leaves Chrome free to throttle the fixture tab.
+  await activatePage(pageTarget.id);
 
   if (process.env.TAB_PETS_E2E_INJECT_DIAGNOSTICS === '1') {
     await page.evaluate("console.error('intentional fixture console error')");
@@ -267,11 +276,24 @@ try {
       ...petState,
       position: { ...petState.position, normalizedX: ${expectedX} }
     } }))`);
-  await waitFor(async () => {
-    const overlay = await readOverlay();
-    const expectedLeft = 12 + (overlay.viewportWidth - 96 - 24) * expectedX;
-    return Math.abs(overlay.x - expectedLeft) < 1 ? overlay : undefined;
-  }, 'live normalized position update');
+  try {
+    await waitFor(async () => {
+      const overlay = await readOverlay();
+      const expectedLeft = 12 + (overlay.viewportWidth - 96 - 24) * expectedX;
+      return Math.abs(overlay.x - expectedLeft) < 1 ? overlay : undefined;
+    }, 'live normalized position update');
+  } catch (error) {
+    const [overlay, stored] = await Promise.allSettled([
+      readOverlay(),
+      home.evaluate(
+        "chrome.storage.local.get('petState').then(({ petState }) => petState?.position?.normalizedX)",
+      ),
+    ]);
+    throw new Error(
+      `Live position update failed: stored=${JSON.stringify(stored)}, overlay=${JSON.stringify(overlay)}`,
+      { cause: error },
+    );
+  }
 
   // Headless Chrome invalidates the old extension context on runtime.reload().
   // Watch for a replacement worker while the runtime reload is in progress.
@@ -347,6 +369,7 @@ try {
       value.heading === "Momo's home" ? value : undefined;
   }, 'state hydration after extension reload');
 
+  await activatePage(restartedPageTarget.id);
   await page.send('Page.reload', { ignoreCache: true });
   await waitFor(async () => {
     const overlay = await readOverlay();
