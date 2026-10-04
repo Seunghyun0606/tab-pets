@@ -18,6 +18,13 @@ verification:
   tab_change: pass
   extension_diagnostics: pass (0 errors)
   page_console_diagnostics: 5 page-origin errors observed; no extension attribution
+interactive_retry:
+  date: '2026-10-05'
+  browser: connected Chrome profile
+  reddit_public_content: pass
+  tab_pets_host: absent (0 tab-pets-root elements)
+  conclusion: Reddit compatibility remains unverified until the user loads and enables
+    the Tab Pets build in this Chrome profile, then reloads the page.
 matrix:
 - site: Google Search
   url: https://www.google.com/
