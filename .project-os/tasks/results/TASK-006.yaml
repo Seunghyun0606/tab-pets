@@ -1,0 +1,23 @@
+task: TASK-006
+status: pass
+summary: Completed M0 compatibility QA using the headless nine-site probe and connected
+  Chrome public-page tests across all ten required sites. Verified Momo display, native
+  page workflows, reload and tab-return behavior, and passing automated regression.
+  Findings and limitations are recorded in TASK-006.qa.yaml and TASK-006.tests.yaml.
+files_changed:
+- .project-os/tasks/results/TASK-006.qa.yaml
+- .project-os/tasks/results/TASK-006.tests.yaml
+verification:
+  acceptance: pass
+  automated_checks: pass
+  ten_site_matrix: pass
+  native_page_workflows: pass
+  independent_review: pass
+  projectctl_doctor: pass
+review: .project-os/tasks/results/TASK-006.review.yaml
+followups:
+- Continue hybrid Reddit QA until headless public content is available.
+- Diagnose E2E position timing if the one-off timeout recurs.
+kind: implementation
+role: developer
+actor: codex-task-result-recorder

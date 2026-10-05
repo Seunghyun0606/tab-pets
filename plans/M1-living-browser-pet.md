@@ -4,7 +4,7 @@
 
 ## 진입 조건
 
-- M0의 TASK-006을 승인된 기준에 따라 완료하고 M0 종료 상태를 확정한다. 현재 10곳 중 Reddit 공개 페이지 검증이 남아 있다.
+- TASK-006의 10곳 호환성 QA와 독립 리뷰는 PASS다. M0의 종료 기준은 증거로 충족했으나 Project OS의 canonical milestone 상태는 아직 active이므로 별도 상태 전이가 필요하다.
 - Momo Browser용 Idle, Walk, Sit, Look, Sleep, Groom 애니메이션 에셋을 준비한다. 현재 저장소에는 `idle-placeholder` 한 프레임만 있다.
 - 기존 결정인 단일 PetState, Shadow DOM overlay, raster WebP sprite + CSS 이동, 주입 가능한 시각·난수에 기반한 결정적 Pet Brain을 유지한다.
 

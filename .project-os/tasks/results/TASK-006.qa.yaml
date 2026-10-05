@@ -1,79 +1,89 @@
 task: TASK-006
-status: fail
-summary: Automated M0 regression passed, and the headless Chrome live-site matrix
-  passed 9 of 10 public sites for a visible isolated Momo overlay, host probe click,
-  real mouse-wheel delivery, text selection, viewport resize, and state restore after
-  tab change. Reddit returned an anti-bot JS challenge instead of its public page,
-  so the required 10/10 site criterion remains unverified.
-files_changed:
-- package.json
-- scripts/chrome-site-matrix.mjs
+status: pass
+summary: >-
+  M0 regression passed. The headless site probe covered 9/10 destinations;
+  Reddit served an anti-bot challenge there. After Tab Pets was enabled in
+  connected Chrome, interactive public-page QA verified all ten sites with
+  exactly one visible Momo overlay and native page workflows.
+files_changed: []
 verification:
   build: pass
   typecheck: pass
   lint: pass
   unit_test: pass (5 files, 21 tests)
-  test_e2e: pass (runtime reload, same-profile restart, page reload, state restore)
-  site_matrix: fail (9 pass, 1 site challenge)
-  tab_change: pass
-  extension_diagnostics: pass (0 errors)
-  page_console_diagnostics: 5 page-origin errors observed; no extension attribution
-interactive_retry:
+  test_e2e: pass (extension and page reload, same-profile restart, state restore)
+  smoke_home: pass
+  smoke_overlay: pass
+  smoke_storage: pass
+  site_matrix: pass (9 headless plus 10 interactive Chrome public-page checks)
+  tab_change: pass (Reddit post retained one overlay after visiting other tabs)
+  extension_diagnostics: pass (automated smoke, no extension error)
+  reddit_browser_console: pass (0 errors on final check)
+environment:
   date: '2026-10-05'
-  browser: connected Chrome profile
-  reddit_public_content: pass
-  tab_pets_host: absent (0 tab-pets-root elements)
-  conclusion: Reddit compatibility remains unverified until the user loads and enables
-    the Tab Pets build in this Chrome profile, then reloads the page.
+  browser: connected desktop Chrome profile with unpacked Tab Pets enabled
+  build: repository dist from npm run build, loaded by user
+  headless_limitation: Reddit anti-bot challenge remains in npm run qa:sites
+  previous_retry: Earlier host-absent result was superseded after extension enablement.
 matrix:
-- site: Google Search
-  url: https://www.google.com/
-  status: pass
-  limitation: Search results and native search submission were not exercised.
-- site: GitHub
-  url: https://github.com/
-  status: pass
-- site: YouTube
-  url: https://www.youtube.com/
-  status: pass
-  limitation: Landing-page shell was tested; video playback was not exercised.
-- site: Reddit
-  url: https://www.reddit.com/
-  status: blocked
-  reason: JS anti-bot challenge was served to headless Chrome.
-- site: Notion public help
-  url: https://www.notion.so/help
-  status: pass
-- site: Wikipedia
-  url: https://en.wikipedia.org/wiki/Cat
-  status: pass
-- site: MDN
-  url: https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot
-  status: pass
-- site: BBC News
-  url: https://www.bbc.com/news
-  status: pass
-- site: IANA
-  url: https://www.iana.org/domains/reserved
-  status: pass
-- site: W3C
-  url: https://www.w3.org/TR/css-scoping-1/
-  status: pass
+  - site: Google Search
+    url: https://www.google.com/
+    status: pass
+    native_interaction: Search submitted and results rendered with one pet host.
+  - site: GitHub
+    url: https://github.com/
+    status: pass
+    native_interaction: Public Docs link opened with one pet host.
+  - site: YouTube
+    url: https://www.youtube.com/watch?v=jNQXAC9IVRw
+    status: pass
+    native_interaction: Public video playback paused; player and pet remained.
+  - site: Reddit
+    url: https://www.reddit.com/
+    status: pass
+    native_interaction: Public feed post opened; scroll, reload, and tab return
+      retained one fixed pet host and normal post content.
+  - site: Notion public help
+    url: https://www.notion.so/help
+    status: pass
+    native_interaction: Public starting-guide category opened with one pet host.
+  - site: Wikipedia
+    url: https://en.wikipedia.org/wiki/Cat
+    status: pass
+    native_interaction: Search for Dog navigated to article with one pet host.
+  - site: MDN
+    url: https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot
+    status: pass
+    native_interaction: Instance properties contents link changed hash with one pet host.
+  - site: BBC News
+    url: https://www.bbc.com/news
+    status: pass
+    native_interaction: Public news article opened with one pet host.
+  - site: IANA
+    url: https://www.iana.org/domains/reserved
+    status: pass
+    native_interaction: Overview link opened Domain Name Services with one pet host.
+  - site: W3C
+    url: https://www.w3.org/TR/css-scoping-1/
+    status: pass
+    native_interaction: Shadow Encapsulation TOC link changed hash and scrolled
+      with one pet host.
 findings:
-- severity: medium
-  issue: Reddit compatibility remains unverified due to site anti-bot challenge.
-  reproduce: Run npm run qa:sites; inspect Reddit site_challenge result.
-  followup: Retry in an authorized interactive Chrome environment with public content
-    accessible.
-- severity: low
-  issue: Host probe interactions do not establish native primary controls on every
-    site.
-  reproduce: Inspect scripts/chrome-site-matrix.mjs host probe flow.
-  followup: Add per-site native control checks before TASK-006 completion.
+  - severity: low
+    issue: Headless Reddit cannot inspect public content due to site anti-bot challenge.
+    reproduce: Run npm run qa:sites and inspect Reddit site_challenge.
+    followup: Keep interactive Chrome Reddit coverage in release QA; investigate
+      a permitted deterministic fixture or browser mode for CI.
+  - severity: low
+    issue: An earlier runtime E2E run timed out once on normalized position update;
+      two retries and the current session run passed.
+    reproduce: Repeat npm run test:e2e and inspect the position-update assertion.
+    followup: Capture PetState and overlay position on future timeout to separate
+      product failure from harness timing.
 critical_issues: 0
 followups:
-- Keep TASK-006 active until Reddit public content and native primary controls are
-  verified.
+  - Maintain hybrid live-site coverage until headless Reddit can be tested
+    without bypassing site protections.
 kind: qa
 role: qa
 actor: codex-qa-task006
