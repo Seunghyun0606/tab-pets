@@ -1,0 +1,18 @@
+task: TASK-008
+status: pass
+summary: Full unit suite, build, typecheck and lint passed. Seeded and scripted random
+  tests cover deterministic output, weights, timing boundaries, recent modifiers,
+  consecutive suppression, non-ROAMING modes, and invalid inputs.
+files_changed: []
+verification:
+  build: pass
+  typecheck: pass
+  lint: pass
+  unit_test: pass (8 files, 35 tests)
+  projectctl_doctor: pass
+critical_issues: 0
+followups:
+- Runtime sequencing and real browsing are outside TASK-008.
+kind: test
+role: qa
+actor: codex-test-task008

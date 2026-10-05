@@ -1,0 +1,23 @@
+task: TASK-008
+status: pass
+decision: PASS
+summary: Independent evaluation finds all TASK-008 acceptance criteria met by the
+  pure, injected-time-and-RNG CURIOUS selector and passing tests. The independent
+  review reports zero critical issues and no schema or DOM change.
+files_changed: []
+verification:
+  deterministic_state_time_seed: pass
+  recent_modifiers_and_triple_guard: pass
+  invalid_input_safety: pass
+  automated_checks: pass (8 files, 35 tests; build, typecheck, lint)
+  independent_review: pass
+  critical_issues: 0
+followups:
+- TASK-010 should persist decision.recent with behavior.current atomically.
+quality:
+  passed: true
+  missing: []
+  failed: []
+kind: evaluation
+role: evaluator
+actor: codex-independent-evaluator-task008

@@ -1,0 +1,23 @@
+task: TASK-008
+status: pass
+summary: Added a pure Momo CURIOUS autonomous selector for six Browser behaviors.
+  It uses explicit time and random inputs, configured weights and durations, recent-history
+  modifiers, and a three-in-a-row guard without changing PetState schema or wiring
+  the DOM runtime.
+files_changed:
+- src/pet/behavior/selector.ts
+- tests/behaviorSelector.test.ts
+verification:
+  acceptance: pass
+  build: pass
+  typecheck: pass
+  lint: pass
+  unit_test: pass
+evidence:
+- tests/behaviorSelector.test.ts
+followups:
+- Integrate the selector with Browser World only in TASK-010.
+- Tune unfixed duration values after M1 visual observation.
+kind: implementation
+role: developer
+actor: codex-dev-task008
