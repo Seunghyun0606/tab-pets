@@ -12,7 +12,7 @@
 
 - Project OS에는 현재 eligible task가 없다. TASK-006은 PASS/done이지만 M0 milestone은 canonical state에서 아직 active이며, 설치된 projectctl에는 milestone 완료·M1 활성화 명령이 없다. 따라서 이 초안만으로 M1 구현이나 canonical backlog를 시작하지 않는다.
 - `specs/architecture/asset-pipeline.md`의 초기 제작 7종은 Idle, Walk, Sit, Look, Sleep, Home Enter, Home Exit인 반면 M1 roadmap의 필수 재생 6종은 Idle, Walk, Sit, Look, Sleep, Groom이다. M1에 필요한 Groom의 제작 순서를 먼저 확정하고, Home Enter/Exit는 M3 범위와 혼동하지 않는다.
-- 사용자는 현재 `idle-placeholder.webp`를 6종 시안의 기준으로 사용하는 안과 시각 방향의 보정을 승인했다. 512 × 512 PNG 마스터와 공통 baseline을 가진 256 × 256 WebP 후보 24개를 내보냈고, 자동 검사와 밝은/어두운 96px 정지 미리보기는 통과했다. 걷기·수면 등의 루프를 실제 Chrome에서 재생해 시각 QA를 마치기 전에는 M1 entry asset 완료로 표시하지 않는다.
+- 사용자는 현재 `idle-placeholder.webp`를 6종 시안의 기준으로 사용하는 안과 시각 방향의 보정을 승인했다. 512 × 512 PNG 마스터와 공통 baseline을 가진 256 × 256 WebP 후보 24개를 내보냈다. 정적 자동 검사와 밝은/어두운 96px 미리보기, 로컬 Chrome의 격리된 QA 페이지에서 6종 프레임 로딩·재생 스모크는 통과했다. 확장 런타임 연결 및 사용자가 보는 Chrome에서의 주관적 루프/자연스러움 검토는 아직이므로 M1 entry asset 완료로 표시하지 않는다.
 
 ## 제안 작업 순서
 

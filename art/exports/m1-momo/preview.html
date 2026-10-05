@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Momo M1 animation QA</title>
+    <style>
+      :root { font-family: system-ui, sans-serif; color: #27303a; background: #f4f5f7; }
+      * { box-sizing: border-box; }
+      body { margin: 0 auto; max-width: 760px; padding: 24px; }
+      h1 { margin: 0 0 8px; font-size: 24px; }
+      p { margin: 0 0 20px; line-height: 1.5; }
+      .toolbar { display: flex; gap: 8px; margin-bottom: 16px; }
+      button { padding: 8px 14px; font: inherit; cursor: pointer; }
+      .row { display: grid; grid-template-columns: 130px 128px 128px; align-items: center; gap: 14px; padding: 12px; border-top: 1px solid #d8dce0; }
+      .label strong, .label small { display: block; }
+      .label small { margin-top: 4px; color: #596571; }
+      .stage { position: relative; width: 128px; height: 112px; overflow: hidden; border-radius: 8px; }
+      .stage.light { background: #e7e9ec; }
+      .stage.dark { background: #30343b; }
+      .stage::before { content: ''; position: absolute; z-index: 0; top: 90.5px; left: 8px; right: 8px; border-top: 1px dashed #8b96a3; opacity: .7; }
+      .stage img { position: absolute; z-index: 1; top: 8px; left: 16px; width: 96px; height: 96px; image-rendering: auto; }
+      @media (max-width: 520px) { .row { grid-template-columns: 1fr 128px 128px; gap: 4px; padding-inline: 0; } body { padding: 12px; } }
+    </style>
+  </head>
+  <body>
+    <h1>Momo M1 animation QA</h1>
+    <p>후보 에셋 실재생 미리보기 · 96 CSS px · 밝은/어두운 배경 · 점선은 y=220 발 기준선. 확장 런타임과는 연결되지 않았습니다.</p>
+    <div class="toolbar">
+      <button id="toggle" type="button">일시정지</button>
+      <button id="restart" type="button">처음부터</button>
+    </div>
+    <main id="animations"></main>
+    <script>
+      const definitions = [
+        { id: 'idle', fps: 6, loop: true },
+        { id: 'walk', fps: 9, loop: true },
+        { id: 'sit', fps: 6, loop: false },
+        { id: 'look', fps: 6, loop: false },
+        { id: 'sleep', fps: 4, loop: true },
+        { id: 'groom', fps: 8, loop: false },
+      ];
+      const rows = new Map();
+      const errors = [];
+      let paused = false;
+
+      for (const definition of definitions) {
+        const row = document.createElement('section');
+        row.className = 'row';
+        row.dataset.behavior = definition.id;
+        row.innerHTML = `<div class="label"><strong>${definition.id}</strong><small>${definition.fps} fps · ${definition.loop ? 'loop' : 'replay'}</small></div>`;
+        const images = [];
+        for (const background of ['light', 'dark']) {
+          const stage = document.createElement('div');
+          stage.className = `stage ${background}`;
+          const image = document.createElement('img');
+          image.alt = `${definition.id} ${background}`;
+          image.onerror = () => errors.push(image.src);
+          stage.append(image);
+          row.append(stage);
+          images.push(image);
+        }
+        document.querySelector('#animations').append(row);
+        rows.set(definition.id, { ...definition, row, images, frame: 0, ticks: 0, holdUntil: 0 });
+      }
+
+      function showFrame(state, frame) {
+        state.frame = frame;
+        state.row.dataset.frame = String(frame);
+        for (const image of state.images) {
+          image.src = `browser/${state.id}-${String(frame).padStart(2, '0')}.webp`;
+        }
+      }
+
+      for (const state of rows.values()) {
+        showFrame(state, 0);
+        const interval = 1000 / state.fps;
+        setInterval(() => {
+          if (paused) return;
+          const now = performance.now();
+          if (now < state.holdUntil) return;
+          const next = state.frame + 1;
+          if (next >= 4) {
+            showFrame(state, 0);
+            if (!state.loop) state.holdUntil = now + 800;
+          } else {
+            showFrame(state, next);
+          }
+          state.ticks += 1;
+        }, interval);
+      }
+
+      document.querySelector('#toggle').addEventListener('click', () => {
+        paused = !paused;
+        document.querySelector('#toggle').textContent = paused ? '재생' : '일시정지';
+      });
+      document.querySelector('#restart').addEventListener('click', () => {
+        for (const state of rows.values()) {
+          state.holdUntil = 0;
+          showFrame(state, 0);
+        }
+      });
+      window.momoPreviewStatus = () => ({
+        paused,
+        errors,
+        rows: Array.from(rows.values(), ({ id, fps, loop, frame, ticks, images }) => ({
+          id, fps, loop, frame, ticks,
+          loaded: images.every((image) => image.complete && image.naturalWidth === 256),
+        })),
+      });
+    </script>
+  </body>
+</html>

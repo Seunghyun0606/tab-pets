@@ -9,6 +9,7 @@
   "scripts": {
     "clean": "node scripts/clean.mjs",
     "art:export:momo": "node scripts/export-m1-momo.mjs",
+    "qa:momo-animation": "node scripts/chrome-momo-animation-qa.mjs",
     "build": "node scripts/build.mjs",
     "smoke:home": "node scripts/chrome-home-smoke.mjs",
     "smoke:overlay": "node scripts/chrome-overlay-smoke.mjs",
