@@ -8,6 +8,7 @@
   },
   "scripts": {
     "clean": "node scripts/clean.mjs",
+    "art:export:momo": "node scripts/export-m1-momo.mjs",
     "build": "node scripts/build.mjs",
     "smoke:home": "node scripts/chrome-home-smoke.mjs",
     "smoke:overlay": "node scripts/chrome-overlay-smoke.mjs",
@@ -25,6 +26,7 @@
     "esbuild": "0.28.2",
     "eslint": "10.11.0",
     "globals": "17.12.0",
+    "sharp": "0.35.5",
     "typescript": "6.0.3",
     "typescript-eslint": "8.70.1",
     "vitest": "5.0.1"

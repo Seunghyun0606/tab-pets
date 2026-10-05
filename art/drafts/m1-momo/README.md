@@ -18,7 +18,7 @@ Status: draft only, generated 2026-10-05. These six transparent RGBA PNG contact
 | Sleep | curled rest → breath → ear twitch → rest | Similar frames; breathing motion needs a deliberate timing pass. |
 | Groom | seated → lick paw → cheek rub → neutral | Action reads clearly; check paw anatomy during frame cleanup. |
 
-All sheets show some red/yellow edge fringing and/or stray alpha pixels. Some character bounds reach the cell edges. Do not split and ship them as-is. Before these can satisfy the M1 animation entry condition, an artist or approved cleanup pass must remove fringe, align a shared 256 × 256 foot baseline, make loop transitions and frame timing deliberate, export transparent WebP frames, and validate them at approximately 96 CSS px in Chrome.
+All sheets show some red/yellow edge fringing and/or stray alpha pixels. Some character bounds reach the cell edges. Do not split and ship them as-is. A reproducible matte/placement pass and provisional WebP frames now live in `art/exports/m1-momo/`; those candidates still require in-motion Chrome visual QA before they can satisfy the M1 animation entry condition.
 
 ## Prompt set
 
