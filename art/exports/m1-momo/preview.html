@@ -40,6 +40,8 @@
         { id: 'sleep', fps: 4, loop: true },
         { id: 'groom', fps: 8, loop: false },
       ];
+      const requestedBase = new URLSearchParams(location.search).get('assetBase');
+      const assetBase = requestedBase ? new URL(requestedBase) : new URL('.', location.href);
       const rows = new Map();
       const errors = [];
       let paused = false;
@@ -68,7 +70,7 @@
         state.frame = frame;
         state.row.dataset.frame = String(frame);
         for (const image of state.images) {
-          image.src = `browser/${state.id}-${String(frame).padStart(2, '0')}.webp`;
+          image.src = new URL(`browser/${state.id}-${String(frame).padStart(2, '0')}.webp`, assetBase).href;
         }
       }
 

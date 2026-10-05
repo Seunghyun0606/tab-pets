@@ -70,3 +70,23 @@ await Promise.all(
     }
   }),
 );
+
+const momoAssetRoot = fromOutput('assets/pets/momo');
+const momoAnimations = JSON.parse(await readFile(resolve(momoAssetRoot, 'animations.json'), 'utf8'));
+const expectedAnimationIds = ['idle', 'walk', 'sit', 'look', 'sleep', 'groom'];
+if (JSON.stringify(momoAnimations.animations?.map(({ id }) => id)) !== JSON.stringify(expectedAnimationIds)) {
+  throw new Error('The packaged Momo animation set is incomplete.');
+}
+await Promise.all(momoAnimations.animations.flatMap((animation) => {
+  if (animation.frames !== 4 || animation.browser?.length !== 4 || animation.baseline !== 220 ||
+      !Number.isFinite(animation.fps) || animation.fps <= 0 || typeof animation.loop !== 'boolean') {
+    throw new Error(`Invalid Momo animation contract: ${animation.id}`);
+  }
+  return animation.browser.map(async (relativePath, index) => {
+    if (relativePath !== `browser/${animation.id}-${String(index).padStart(2, '0')}.webp`) {
+      throw new Error(`Unexpected Momo frame path: ${relativePath}`);
+    }
+    const file = await stat(resolve(momoAssetRoot, relativePath));
+    if (!file.isFile()) throw new Error(`Missing Momo frame: ${relativePath}`);
+  });
+}));

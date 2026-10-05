@@ -1,0 +1,159 @@
+{
+  "browser": "Chrome/154.0.8037.95",
+  "initial": [
+    {
+      "id": "idle",
+      "fps": 6,
+      "loop": true,
+      "frame": 0,
+      "ticks": 0,
+      "loaded": true
+    },
+    {
+      "id": "walk",
+      "fps": 9,
+      "loop": true,
+      "frame": 0,
+      "ticks": 0,
+      "loaded": true
+    },
+    {
+      "id": "sit",
+      "fps": 6,
+      "loop": false,
+      "frame": 0,
+      "ticks": 0,
+      "loaded": true
+    },
+    {
+      "id": "look",
+      "fps": 6,
+      "loop": false,
+      "frame": 0,
+      "ticks": 0,
+      "loaded": true
+    },
+    {
+      "id": "sleep",
+      "fps": 4,
+      "loop": true,
+      "frame": 0,
+      "ticks": 0,
+      "loaded": true
+    },
+    {
+      "id": "groom",
+      "fps": 8,
+      "loop": false,
+      "frame": 0,
+      "ticks": 0,
+      "loaded": true
+    }
+  ],
+  "after350ms": [
+    {
+      "id": "idle",
+      "fps": 6,
+      "loop": true,
+      "frame": 3,
+      "ticks": 3,
+      "loaded": true
+    },
+    {
+      "id": "walk",
+      "fps": 9,
+      "loop": true,
+      "frame": 1,
+      "ticks": 5,
+      "loaded": true
+    },
+    {
+      "id": "sit",
+      "fps": 6,
+      "loop": false,
+      "frame": 3,
+      "ticks": 3,
+      "loaded": true
+    },
+    {
+      "id": "look",
+      "fps": 6,
+      "loop": false,
+      "frame": 3,
+      "ticks": 3,
+      "loaded": true
+    },
+    {
+      "id": "sleep",
+      "fps": 4,
+      "loop": true,
+      "frame": 2,
+      "ticks": 2,
+      "loaded": true
+    },
+    {
+      "id": "groom",
+      "fps": 8,
+      "loop": false,
+      "frame": 0,
+      "ticks": 4,
+      "loaded": true
+    }
+  ],
+  "afterFullCycle": [
+    {
+      "id": "idle",
+      "fps": 6,
+      "loop": true,
+      "frame": 2,
+      "ticks": 14,
+      "loaded": true
+    },
+    {
+      "id": "walk",
+      "fps": 9,
+      "loop": true,
+      "frame": 1,
+      "ticks": 21,
+      "loaded": true
+    },
+    {
+      "id": "sit",
+      "fps": 6,
+      "loop": false,
+      "frame": 0,
+      "ticks": 8,
+      "loaded": true
+    },
+    {
+      "id": "look",
+      "fps": 6,
+      "loop": false,
+      "frame": 0,
+      "ticks": 8,
+      "loaded": true
+    },
+    {
+      "id": "sleep",
+      "fps": 4,
+      "loop": true,
+      "frame": 1,
+      "ticks": 9,
+      "loaded": true
+    },
+    {
+      "id": "groom",
+      "fps": 8,
+      "loop": false,
+      "frame": 0,
+      "ticks": 8,
+      "loaded": true
+    }
+  ],
+  "errors": [],
+  "screenshots": [
+    "art/exports/m1-momo/chrome-runtime-preview.png",
+    "art/exports/m1-momo/chrome-runtime-preview-playing.png"
+  ],
+  "scope": "Isolated Chrome preview of dist assets; the extension still displays the placeholder."
+}

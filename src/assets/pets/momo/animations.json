@@ -1,0 +1,82 @@
+{
+  "animations": [
+    {
+      "id": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "baseline": 220,
+      "browser": [
+        "browser/idle-00.webp",
+        "browser/idle-01.webp",
+        "browser/idle-02.webp",
+        "browser/idle-03.webp"
+      ]
+    },
+    {
+      "id": "walk",
+      "frames": 4,
+      "fps": 9,
+      "loop": true,
+      "baseline": 220,
+      "browser": [
+        "browser/walk-00.webp",
+        "browser/walk-01.webp",
+        "browser/walk-02.webp",
+        "browser/walk-03.webp"
+      ]
+    },
+    {
+      "id": "sit",
+      "frames": 4,
+      "fps": 6,
+      "loop": false,
+      "baseline": 220,
+      "browser": [
+        "browser/sit-00.webp",
+        "browser/sit-01.webp",
+        "browser/sit-02.webp",
+        "browser/sit-03.webp"
+      ]
+    },
+    {
+      "id": "look",
+      "frames": 4,
+      "fps": 6,
+      "loop": false,
+      "baseline": 220,
+      "browser": [
+        "browser/look-00.webp",
+        "browser/look-01.webp",
+        "browser/look-02.webp",
+        "browser/look-03.webp"
+      ]
+    },
+    {
+      "id": "sleep",
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "baseline": 220,
+      "browser": [
+        "browser/sleep-00.webp",
+        "browser/sleep-01.webp",
+        "browser/sleep-02.webp",
+        "browser/sleep-03.webp"
+      ]
+    },
+    {
+      "id": "groom",
+      "frames": 4,
+      "fps": 8,
+      "loop": false,
+      "baseline": 220,
+      "browser": [
+        "browser/groom-00.webp",
+        "browser/groom-01.webp",
+        "browser/groom-02.webp",
+        "browser/groom-03.webp"
+      ]
+    }
+  ]
+}

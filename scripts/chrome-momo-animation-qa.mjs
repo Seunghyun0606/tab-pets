@@ -6,9 +6,26 @@ import { pathToFileURL } from 'node:url';
 
 const root = path.resolve(import.meta.dirname, '..');
 const exportDir = path.join(root, 'art', 'exports', 'm1-momo');
-const previewUrl = pathToFileURL(path.join(exportDir, 'preview.html')).href;
-const profilePath = await mkdtemp(path.join(tmpdir(), 'tab-pets-momo-qa-'));
+const runtimeMode = process.argv.includes('--runtime');
+const assetRoot = runtimeMode ? path.join(root, 'dist', 'assets', 'pets', 'momo') : exportDir;
+const previewPage = pathToFileURL(path.join(exportDir, 'preview.html'));
+if (runtimeMode) {
+  previewPage.searchParams.set('assetBase', new URL('.', pathToFileURL(path.join(assetRoot, 'animations.json'))).href);
+}
+const previewUrl = previewPage.href;
+const outputPrefix = runtimeMode ? 'chrome-runtime' : 'chrome';
 const manifest = JSON.parse(await readFile(path.join(exportDir, 'manifest.json'), 'utf8'));
+if (runtimeMode) {
+  const packaged = JSON.parse(await readFile(path.join(assetRoot, 'animations.json'), 'utf8'));
+  for (const [index, animation] of manifest.animations.entries()) {
+    const runtime = packaged.animations?.[index];
+    if (runtime?.id !== animation.id || runtime.fps !== animation.fps || runtime.loop !== animation.loop ||
+        runtime.baseline !== manifest.baseline || JSON.stringify(runtime.browser) !== JSON.stringify(animation.files)) {
+      throw new Error(`Packaged animation differs from approved candidate: ${animation.id}`);
+    }
+  }
+}
+const profilePath = await mkdtemp(path.join(tmpdir(), 'tab-pets-momo-qa-'));
 
 const candidates = [
   process.env.CHROME_PATH,
@@ -133,7 +150,7 @@ try {
   }, '24 sprite images');
   if (first.errors.length || client.errors.length) throw new Error(`Preview errors: ${JSON.stringify([...first.errors, ...client.errors])}`);
   const screenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true });
-  await writeFile(path.join(exportDir, 'chrome-preview.png'), Buffer.from(screenshot.data, 'base64'));
+  await writeFile(path.join(exportDir, `${outputPrefix}-preview.png`), Buffer.from(screenshot.data, 'base64'));
 
   await delay(350);
   const second = await client.evaluate('window.momoPreviewStatus()');
@@ -147,7 +164,7 @@ try {
     }
   }
   const playingScreenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true });
-  await writeFile(path.join(exportDir, 'chrome-preview-playing.png'), Buffer.from(playingScreenshot.data, 'base64'));
+  await writeFile(path.join(exportDir, `${outputPrefix}-preview-playing.png`), Buffer.from(playingScreenshot.data, 'base64'));
 
   await delay(1700);
   const fullCycle = await client.evaluate('window.momoPreviewStatus()');
@@ -166,10 +183,10 @@ try {
     after350ms: second.rows,
     afterFullCycle: fullCycle.rows,
     errors: client.errors,
-    screenshots: ['art/exports/m1-momo/chrome-preview.png', 'art/exports/m1-momo/chrome-preview-playing.png'],
-    scope: 'Isolated asset preview; the extension runtime remains unchanged.',
+    screenshots: [`art/exports/m1-momo/${outputPrefix}-preview.png`, `art/exports/m1-momo/${outputPrefix}-preview-playing.png`],
+    scope: runtimeMode ? 'Isolated Chrome preview of dist assets; the extension still displays the placeholder.' : 'Isolated asset preview; the extension runtime remains unchanged.',
   };
-  await writeFile(path.join(exportDir, 'chrome-qa.json'), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+  await writeFile(path.join(exportDir, `${outputPrefix}-qa.json`), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
 } finally {
   client?.socket.close();

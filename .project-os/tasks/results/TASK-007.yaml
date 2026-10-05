@@ -1,0 +1,39 @@
+task: TASK-007
+status: pass
+summary: Packaged the approved six Momo Browser animations as 24 transparent WebP
+  runtime frames with a separate playback contract. Build validation and isolated
+  Chrome dist-asset QA confirm the package while the M0 overlay continues to use the
+  idle placeholder.
+files_changed:
+- src/assets/pets/momo/animations.json
+- src/assets/pets/momo/browser/
+- scripts/package-m1-momo.mjs
+- scripts/build.mjs
+- scripts/chrome-momo-animation-qa.mjs
+- art/exports/m1-momo/preview.html
+- art/exports/m1-momo/README.md
+- art/exports/m1-momo/chrome-runtime-qa.json
+- art/exports/m1-momo/chrome-runtime-preview.png
+- art/exports/m1-momo/chrome-runtime-preview-playing.png
+- tests/momoRuntimeAssets.test.ts
+- package.json
+verification:
+  acceptance: pass
+  build: pass
+  typecheck: pass
+  lint: pass
+  unit_test: pass
+  smoke_overlay: pass
+  source_animation_qa: pass
+  runtime_animation_qa: pass
+evidence:
+- tests/momoRuntimeAssets.test.ts
+- art/exports/m1-momo/chrome-runtime-qa.json
+- art/exports/m1-momo/chrome-runtime-preview.png
+- art/exports/m1-momo/chrome-runtime-preview-playing.png
+followups:
+- Integrate the packaged animations into the extension only in TASK-010.
+- Verify autonomous transitions and real browsing under TASK-011.
+kind: implementation
+role: developer
+actor: codex-dev-task007

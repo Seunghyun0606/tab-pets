@@ -1,0 +1,28 @@
+task: TASK-007
+status: pass
+summary: The required art export, source playback QA, package command, build, typecheck,
+  unit suite, and overlay smoke passed. Dist-frame playback passed in Chrome on light
+  and dark 96 CSS px preview backgrounds.
+files_changed: []
+verification:
+  art_export: pass
+  art_package: pass
+  source_animation_qa: pass
+  runtime_animation_qa: pass
+  build: pass
+  typecheck: pass
+  lint: pass
+  unit_test: pass (7 files, 23 tests)
+  smoke_overlay: pass (3 sites, lifecycle and pass-through checks)
+  projectctl_doctor: pass
+browser: Chrome/154.0.8037.95
+evidence:
+- art/exports/m1-momo/chrome-runtime-qa.json
+- art/exports/m1-momo/chrome-runtime-preview.png
+- art/exports/m1-momo/chrome-runtime-preview-playing.png
+critical_issues: 0
+followups:
+- This is isolated packaged-asset QA, not six-behavior extension integration.
+kind: test
+role: qa
+actor: codex-test-task007
