@@ -1,0 +1,10 @@
+id: M0-to-M1
+from: M0
+to: M1
+approval: "Human approved Project OS transition and M1 kickoff after approving all six Momo animation concepts."
+evidence:
+  - .project-os/tasks/results/TASK-006.evaluation.yaml
+  - art/exports/m1-momo/manifest.json
+  - art/exports/m1-momo/chrome-qa.json
+  - art/exports/m1-momo/README.md
+tasks: [TASK-007, TASK-008, TASK-009, TASK-010, TASK-011]

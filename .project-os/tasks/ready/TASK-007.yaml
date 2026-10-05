@@ -1,0 +1,48 @@
+id: TASK-007
+title: "Package the approved Momo Browser animation set"
+role: developer
+milestone: M1
+priority: P0
+status: ready
+
+objective: "승인된 Idle, Walk, Sit, Look, Sleep, Groom WebP 후보를 확장 배포 에셋으로 정리하고 재생 계약을 명시한다."
+why: "Behavior Engine 통합 전에 경로, frame 수, timing, baseline이 검증 가능한 단일 계약이 필요하다."
+
+scope:
+  include:
+    - "24개 투명 256px WebP 프레임과 manifest를 extension build asset으로 배치"
+    - "frame 수, fps, loop, baseline의 타입과 경로 검증"
+    - "기존 idle-placeholder 사용 경로와 M0 회귀 보호"
+    - "약 96 CSS px에서 밝은/어두운 배경 및 Chrome 로딩 확인"
+  exclude:
+    - "자율 행동 선택과 timer 통합"
+    - "CSS 이동과 viewport 좌표"
+    - "Home Enter/Exit 및 추가 캐릭터"
+
+depends_on: [TASK-006]
+specs:
+  - "specs/architecture/asset-pipeline.md"
+  - "plans/M1-living-browser-pet.md"
+relevant_files:
+  - "art/exports/m1-momo/"
+  - "src/assets/pets/momo/"
+  - "scripts/build.mjs"
+active_decisions:
+  - ".project-os/decisions/ADR-003-sprite-rendering.yaml"
+context_keys: [runtime, product-direction]
+
+acceptance:
+  - "6종 각각 4프레임의 투명 WebP가 extension build에 포함된다."
+  - "각 animation의 fps, loop, baseline=220 및 frame 경로가 manifest와 일치한다."
+  - "모든 frame은 256 × 256이며 Chrome에서 로드된다."
+  - "현재 정적 M0 overlay는 TASK-010 통합 전까지 회귀하지 않는다."
+verification:
+  - "npm run art:export:momo"
+  - "npm run qa:momo-animation"
+  - "npm run build"
+  - "npm run typecheck"
+  - "npm test"
+  - "npm run smoke:overlay"
+
+human_gate: false
+risk: medium

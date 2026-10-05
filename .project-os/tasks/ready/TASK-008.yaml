@@ -1,0 +1,42 @@
+id: TASK-008
+title: "Implement deterministic autonomous behavior selection"
+role: developer
+milestone: M1
+priority: P0
+status: ready
+
+objective: "ROAMING 중 Momo의 여섯 자율 행동과 지속 시간을 순수 함수로 선택한다."
+why: "반복감과 timer 문제를 재현 가능하게 검증하려면 시각·난수 의존성을 명시해야 한다."
+
+scope:
+  include:
+    - "Idle, Walk, Sit, Look, Sleep, Groom 후보·가중치·지속 시간"
+    - "주입된 현재 시각과 seeded 난수원"
+    - "최근 세 행동 감쇠 및 세 번 연속 동일 행동 억제"
+    - "Momo CURIOUS 초기 설정에 대한 단위 테스트"
+  exclude:
+    - "Needs, Relationship, 사용자 직접 상호작용"
+    - "DOM rendering 및 position movement"
+
+depends_on: [TASK-006]
+specs:
+  - "specs/architecture/runtime-architecture.md"
+  - "plans/M1-living-browser-pet.md"
+relevant_files:
+  - "src/"
+  - "tests/"
+active_decisions:
+  - ".project-os/decisions/ADR-001-single-pet-state.yaml"
+  - ".project-os/decisions/ADR-004-deterministic-pet-brain.yaml"
+context_keys: [runtime, product-direction]
+
+acceptance:
+  - "동일 상태·시각·seed에서 동일 행동과 지속 시간이 나온다."
+  - "최근 1회 0.50, 2회 0.20 감쇠와 정상 경로의 3연속 억제가 테스트된다."
+  - "ROAMING 외 상태와 유효하지 않은 난수값을 안전하게 처리한다."
+verification:
+  - "npm run typecheck"
+  - "npm test"
+
+human_gate: false
+risk: medium

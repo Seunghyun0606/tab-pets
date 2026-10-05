@@ -1,0 +1,47 @@
+id: TASK-010
+title: "Integrate six autonomous animations into Browser World"
+role: developer
+milestone: M1
+priority: P1
+status: ready
+
+objective: "선택된 자율 행동을 Browser World에서 재생하고 종료 후 다음 행동으로 자연스럽게 이어 준다."
+why: "에셋, selector, 이동이 분리 검증되어도 Chrome lifecycle에서 한 마리로 이어지는 통합이 필요하다."
+
+scope:
+  include:
+    - "여섯 애니메이션의 frame 재생과 행동 전환"
+    - "WALK CSS 이동 및 normalizedX 반영"
+    - "content script 중복·pagehide·extension reload의 timer/listener 정리"
+    - "단일 PetState 소유권과 기존 overlay 입력 격리 유지"
+  exclude:
+    - "Pet click, Home transition, Needs, Relationship"
+
+depends_on: [TASK-007, TASK-008, TASK-009]
+specs:
+  - "specs/architecture/runtime-architecture.md"
+  - "plans/M1-living-browser-pet.md"
+relevant_files:
+  - "src/browser/"
+  - "src/assets/pets/momo/"
+  - "tests/"
+active_decisions:
+  - ".project-os/decisions/ADR-001-single-pet-state.yaml"
+  - ".project-os/decisions/ADR-002-shadow-dom-overlay.yaml"
+  - ".project-os/decisions/ADR-003-sprite-rendering.yaml"
+  - ".project-os/decisions/ADR-004-deterministic-pet-brain.yaml"
+context_keys: [runtime, product-direction]
+
+acceptance:
+  - "여섯 행동이 선택·재생되고 종료 뒤 다음 자율 행동으로 이어진다."
+  - "reload·tab change 후 visible Momo는 한 마리이며 유효한 행동·위치를 갖는다."
+  - "extension 오류 0건이고 M0 overlay·storage 회귀가 없다."
+verification:
+  - "npm run build"
+  - "npm run lint"
+  - "npm run typecheck"
+  - "npm test"
+  - "npm run test:e2e"
+
+human_gate: false
+risk: high

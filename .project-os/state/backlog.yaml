@@ -61,3 +61,55 @@ tasks:
   - TASK-005
   human_gate: false
   contract: .project-os/tasks/ready/TASK-006.yaml
+- id: TASK-007
+  title: Package the approved Momo Browser animation set
+  role: developer
+  milestone: M1
+  priority: P0
+  status: ready
+  depends_on:
+  - TASK-006
+  human_gate: false
+  contract: .project-os/tasks/ready/TASK-007.yaml
+- id: TASK-008
+  title: Implement deterministic autonomous behavior selection
+  role: developer
+  milestone: M1
+  priority: P0
+  status: ready
+  depends_on:
+  - TASK-006
+  human_gate: false
+  contract: .project-os/tasks/ready/TASK-008.yaml
+- id: TASK-009
+  title: Implement viewport-safe Browser World movement
+  role: developer
+  milestone: M1
+  priority: P1
+  status: ready
+  depends_on:
+  - TASK-008
+  human_gate: false
+  contract: .project-os/tasks/ready/TASK-009.yaml
+- id: TASK-010
+  title: Integrate six autonomous animations into Browser World
+  role: developer
+  milestone: M1
+  priority: P1
+  status: ready
+  depends_on:
+  - TASK-007
+  - TASK-008
+  - TASK-009
+  human_gate: false
+  contract: .project-os/tasks/ready/TASK-010.yaml
+- id: TASK-011
+  title: Verify M1 autonomous browsing experience
+  role: qa
+  milestone: M1
+  priority: P1
+  status: ready
+  depends_on:
+  - TASK-010
+  human_gate: false
+  contract: .project-os/tasks/ready/TASK-011.yaml

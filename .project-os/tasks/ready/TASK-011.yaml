@@ -1,0 +1,47 @@
+id: TASK-011
+title: "Verify M1 autonomous browsing experience"
+role: qa
+milestone: M1
+priority: P1
+status: ready
+
+objective: "실제 Chrome 브라우징에서 M1 자율 행동·반복감·위치 복원·입력 비간섭을 검증한다."
+why: "자동 재생 검사만으로 10분간 자연스럽게 함께 있는 경험을 판단할 수 없다."
+
+scope:
+  include:
+    - "자동 build, lint, typecheck, unit, E2E 결과 검토"
+    - "지원 사이트 회귀와 탭 전환·viewport resize 확인"
+    - "10분 실제 브라우징 관찰 및 여섯 행동 재생 기록"
+    - "반복감, 콘텐츠 가림, 입력 방해, extension 오류의 severity 기록"
+  exclude:
+    - "기능 구현 수정"
+    - "M2 상호작용 승인"
+
+depends_on: [TASK-010]
+specs:
+  - "plans/M1-living-browser-pet.md"
+  - "specs/product/00-initial-plan.md"
+relevant_files:
+  - "tests/"
+  - "scripts/chrome-site-matrix.mjs"
+active_decisions:
+  - ".project-os/decisions/ADR-001-single-pet-state.yaml"
+  - ".project-os/decisions/ADR-002-shadow-dom-overlay.yaml"
+context_keys: [runtime, product-direction]
+
+acceptance:
+  - "M1 roadmap의 네 종료 기준 각각에 재현 가능한 증거가 있다."
+  - "10분 관찰에서 같은 sequence의 두드러진 반복이 없고 여섯 행동을 확인했다."
+  - "탭 전환·resize 뒤 행동과 위치가 유효하고 페이지 입력이 방해받지 않는다."
+  - "critical issue 0건이며 non-critical finding에는 재현 절차가 있다."
+verification:
+  - "npm run build"
+  - "npm run lint"
+  - "npm run typecheck"
+  - "npm test"
+  - "npm run test:e2e"
+  - "10-minute Chrome visual QA"
+
+human_gate: false
+risk: high

@@ -1,7 +1,7 @@
 milestones:
   - id: M0
     name: Runtime Foundation
-    status: active
+    status: done
     objective: "일반 웹페이지와 Side Panel에서 하나의 정적 Momo를 안전하게 표시하고 상태를 유지하는 Chrome MV3 기반을 만든다."
     entry_criteria:
       - "제품 기준 문서와 Runtime 아키텍처 결정이 확정되어 있다."
@@ -18,7 +18,7 @@ milestones:
 
   - id: M1
     name: Living Browser Pet
-    status: planned
+    status: active
     objective: "Momo가 상호작용 없이도 자연스럽게 쉬고 걷고 주변을 살피는 자율 행동을 완성한다."
     entry_criteria:
       - "M0 Runtime Foundation이 완료되어 있다."
@@ -28,7 +28,7 @@ milestones:
       - "이동이 viewport 경계와 resize를 지키며 normalized position을 유지한다."
       - "10분 관찰에서 같은 sequence의 반복이 두드러지지 않는다."
       - "탭 전환 뒤에도 유효한 행동과 위치로 복귀한다."
-    tasks: []
+    tasks: [TASK-007, TASK-008, TASK-009, TASK-010, TASK-011]
     human_gate:
       required_on_completion: false
 

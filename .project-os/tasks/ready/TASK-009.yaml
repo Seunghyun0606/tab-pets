@@ -1,0 +1,45 @@
+id: TASK-009
+title: "Implement viewport-safe Browser World movement"
+role: developer
+milestone: M1
+priority: P1
+status: ready
+
+objective: "WALK의 목표·도착·resize 복원을 Pet World 좌표와 CSS 이동으로 처리한다."
+why: "자율 걷기가 페이지 입력을 방해하거나 viewport 밖으로 사라지면 핵심 경험을 해친다."
+
+scope:
+  include:
+    - "viewport 폭에 따른 목표 x clamp와 normalizedX 복원"
+    - "35~45 px/s 기본 속도와 설정 가능한 변주"
+    - "sprite frame과 위치 이동의 분리"
+    - "좁은 viewport·resize·tab change 좌표 테스트"
+  exclude:
+    - "DOM 물리 시뮬레이션"
+    - "Needs 및 상호작용 이동"
+
+depends_on: [TASK-008]
+specs:
+  - "specs/architecture/runtime-architecture.md"
+  - "plans/M1-living-browser-pet.md"
+relevant_files:
+  - "src/browser/"
+  - "tests/browser.test.ts"
+active_decisions:
+  - ".project-os/decisions/ADR-001-single-pet-state.yaml"
+  - ".project-os/decisions/ADR-002-shadow-dom-overlay.yaml"
+  - ".project-os/decisions/ADR-003-sprite-rendering.yaml"
+context_keys: [runtime, product-direction]
+
+acceptance:
+  - "목표와 복원 위치가 viewport의 유효 범위를 벗어나지 않는다."
+  - "resize와 tab change 후 normalizedX가 유지된다."
+  - "이동은 CSS transform으로 수행하고 매 frame host DOM layout을 읽지 않는다."
+  - "Pet 밖의 페이지 클릭·스크롤이 계속 동작한다."
+verification:
+  - "npm run typecheck"
+  - "npm test"
+  - "npm run smoke:overlay"
+
+human_gate: false
+risk: medium
