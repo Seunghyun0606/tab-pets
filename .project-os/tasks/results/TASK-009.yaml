@@ -1,0 +1,29 @@
+task: TASK-009
+status: pass
+summary: Added bounded Pet World WALK planning and sampling, a 35-45 px/s CURIOUS
+  speed configuration, and an explicit Shadow DOM layer movement adapter that updates
+  only CSS translate3d position. Active walks rebase on resize; persisted normalized
+  position is restored on tab return. Autonomous behavior wiring remains TASK-010
+  scope.
+files_changed:
+- src/browser/placement.ts
+- src/browser/movement.ts
+- src/browser/petLayer.ts
+- tests/browser.test.ts
+- scripts/chrome-overlay-smoke.mjs
+verification:
+  acceptance: pass
+  build: pass
+  typecheck: pass
+  lint: pass
+  unit_test: pass
+  smoke_overlay: pass
+evidence:
+- tests/browser.test.ts
+- scripts/chrome-overlay-smoke.mjs
+followups:
+- TASK-010 should invoke walkToNormalizedX for WALK and persist the resulting normalizedX
+  through the existing PetState repository boundary.
+kind: implementation
+role: developer
+actor: codex-dev-task009

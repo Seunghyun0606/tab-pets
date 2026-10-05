@@ -3,6 +3,7 @@ import { createServer } from 'node:http';
 import { access, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
+import { build as buildBundle } from 'esbuild';
 
 const projectRoot = resolve(import.meta.dirname, '..');
 const extensionPath = resolve(projectRoot, 'dist');
@@ -236,6 +237,7 @@ const valueFrom = (result) => result.result.value;
 
 let client;
 let extensionReloadClient;
+let tabSwitchClient;
 try {
   const port = await waitFor(async () => {
     const contents = await readFile(
@@ -477,6 +479,99 @@ try {
   if (!boundsAreValid) throw new Error('Pet escaped the resized viewport.');
   await client.send('Emulation.clearDeviceMetricsOverride');
 
+  // Exercise the explicit WALK adapter without activating autonomous behavior
+  // in the production content script (that integration belongs to TASK-010).
+  await client.send('Emulation.setDeviceMetricsOverride', {
+    deviceScaleFactor: 1,
+    height: 700,
+    mobile: false,
+    width: 180,
+  });
+  const movementProbe = await buildBundle({
+    bundle: true,
+    format: 'iife',
+    platform: 'browser',
+    write: false,
+    stdin: {
+      contents: `
+        import { mountPetLayer } from './src/browser/petLayer.ts';
+        const layer = mountPetLayer({
+          assetUrl: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+          normalizedX: 0.1,
+          runtimeId: 'movement-smoke',
+        });
+        window.__tabPetsMovementProbe = { layer, arrived: null };
+        layer.walkToNormalizedX(0.9, 0, (normalizedX) => {
+          window.__tabPetsMovementProbe.arrived = normalizedX;
+        });
+      `,
+      loader: 'ts',
+      resolveDir: projectRoot,
+      sourcefile: 'movement-smoke-entry.ts',
+    },
+  });
+  await evaluate(movementProbe.outputFiles[0].text);
+  await waitFor(() => evaluate(`(() => {
+    const x = Number.parseFloat(window.__tabPetsMovementProbe.layer.hitTarget.style.getPropertyValue('--tab-pets-x'));
+    return x > 18 && x < 72;
+  })()`), 'WALK progress before resize');
+  await client.send('Emulation.setDeviceMetricsOverride', {
+    deviceScaleFactor: 1,
+    height: 700,
+    mobile: false,
+    width: 320,
+  });
+  await waitFor(() => evaluate('Math.abs(window.__tabPetsMovementProbe.arrived - 0.9) < 0.000001'), 'WALK arrival after resize');
+  const movementResult = await evaluate(`(() => {
+    const target = window.__tabPetsMovementProbe.layer.hitTarget;
+    const rect = target.getBoundingClientRect();
+    return {
+      x: Number.parseFloat(target.style.getPropertyValue('--tab-pets-x')),
+      left: rect.left,
+      right: rect.right,
+      transform: getComputedStyle(target).transform,
+    };
+  })()`);
+  if (Math.abs(movementResult.x - 192) > 0.01 ||
+      Math.abs(movementResult.left - 192) > 0.01 ||
+      movementResult.right > 320 || movementResult.transform === 'none') {
+    throw new Error(`WALK CSS transform or bounds failed: ${JSON.stringify(movementResult)}`);
+  }
+  await evaluate('window.__tabPetsMovementProbe.layer.destroy(); delete window.__tabPetsMovementProbe');
+  await client.send('Emulation.clearDeviceMetricsOverride');
+
+  // A non-default normalized position must survive opening another tab and
+  // returning, with each content script reading the same persisted PetState.
+  await evaluate(`(async () => {
+    const { petState } = await chrome.storage.local.get('petState');
+    await chrome.storage.local.set({
+      petState: {
+        ...petState,
+        position: { ...petState.position, normalizedX: 0.73 },
+      },
+    });
+    return true;
+  })()`, extensionContextId);
+  const readOverlayX = `Number.parseFloat(document.querySelector(
+    'tab-pets-root[data-tab-pets-runtime]'
+  )?.shadowRoot?.querySelector('#momo-hit-target')?.style.getPropertyValue('--tab-pets-x'))`;
+  const expectedTabX = 12 + (viewport.width - 96 - 24) * 0.73;
+  await waitFor(() => evaluate(`Math.abs(${readOverlayX} - ${expectedTabX}) < 0.01`), 'stored normalized position');
+  const tabSwitchTarget = await (
+    await fetch(`http://127.0.0.1:${port}/json/new?${encodeURIComponent(fixtureUrl)}`, { method: 'PUT' })
+  ).json();
+  tabSwitchClient = await createClient(tabSwitchTarget.webSocketDebuggerUrl);
+  await tabSwitchClient.send('Page.bringToFront');
+  await waitFor(async () => {
+    const result = await tabSwitchClient.send('Runtime.evaluate', {
+      expression: `Math.abs(${readOverlayX} - ${expectedTabX}) < 0.01`,
+      returnByValue: true,
+    });
+    return valueFrom(result);
+  }, 'normalized position on second tab');
+  await client.send('Page.bringToFront');
+  await waitFor(() => evaluate(`Math.abs(${readOverlayX} - ${expectedTabX}) < 0.01`), 'normalized position after tab return');
+
   await evaluate("dispatchEvent(new PageTransitionEvent('pagehide'))");
   await waitFor(
     () => evaluate(
@@ -531,9 +626,10 @@ try {
   );
 
   console.log(
-    'Chrome overlay smoke passed (host-id collision preservation, isolation, pass-through, worker idle, duplicate injection, resize, page and extension teardown, 3 sites).',
+    'Chrome overlay smoke passed (host-id collision preservation, isolation, pass-through, worker idle, duplicate injection, WALK transform and resize, normalized tab return, page and extension teardown, 3 sites).',
   );
 } finally {
+  tabSwitchClient?.socket.close();
   extensionReloadClient?.socket.close();
   client?.socket.close();
   stopChrome();

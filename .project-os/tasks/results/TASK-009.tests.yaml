@@ -1,0 +1,22 @@
+task: TASK-009
+status: pass
+summary: Build, typecheck, lint and all 40 unit tests passed. Chrome overlay smoke
+  passed explicit WALK CSS movement, mid-walk resize, non-default persisted normalizedX
+  across a new tab and return, viewport bounds, click/scroll pass-through, lifecycle
+  teardown and three-site regression.
+files_changed: []
+verification:
+  build: pass
+  typecheck: pass
+  lint: pass
+  unit_test: pass (8 files, 40 tests)
+  smoke_overlay: pass (WALK transform, resize, tab return, pass-through, lifecycle,
+    3 sites)
+  projectctl_doctor: pass
+critical_issues: 0
+followups:
+- Automatic behavior transitions and persistence during autonomous movement are TASK-010
+  scope.
+kind: test
+role: qa
+actor: codex-test-task009

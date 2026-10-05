@@ -86,7 +86,7 @@ tasks:
   role: developer
   milestone: M1
   priority: P1
-  status: ready
+  status: done
   depends_on:
   - TASK-008
   human_gate: false

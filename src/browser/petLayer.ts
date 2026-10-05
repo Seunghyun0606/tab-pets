@@ -1,17 +1,13 @@
+import { createWalkPlan, rebaseWalkForViewport, sampleWalk, type WalkPlan } from './movement';
+import { calculatePetPlacement, normalizePosition } from './placement';
+
+export { calculatePetPlacement, normalizePosition, PET_BOTTOM_MARGIN, PET_EDGE_MARGIN, PET_RENDER_SIZE } from './placement';
+export type { PetPlacement } from './placement';
+
 export const PET_LAYER_HOST_ID = 'tab-pets-root';
 export const PET_ACTIVITY_ZONE_HEIGHT = 180;
-export const PET_RENDER_SIZE = 96;
-export const PET_EDGE_MARGIN = 12;
-export const PET_BOTTOM_MARGIN = 10;
 
 const REGISTRY_KEY = Symbol.for('tab-pets.pet-layer.v1');
-
-export interface PetPlacement {
-  bottom: number;
-  normalizedX: number;
-  size: number;
-  x: number;
-}
 
 export interface PetLayer {
   readonly created: boolean;
@@ -19,6 +15,7 @@ export interface PetLayer {
   readonly host: HTMLElement;
   destroy(): void;
   setNormalizedX(value: number): void;
+  walkToNormalizedX(value: number, variation?: number, onArrive?: (normalizedX: number) => void): void;
 }
 
 export interface PetLayerOptions {
@@ -32,46 +29,6 @@ export interface PetLayerOptions {
 interface PetLayerRegistry {
   [runtimeId: string]: PetLayer | undefined;
 }
-
-const clamp = (value: number, minimum: number, maximum: number): number =>
-  Math.min(maximum, Math.max(minimum, value));
-
-export const normalizePosition = (value: number): number =>
-  Number.isFinite(value) ? clamp(value, 0, 1) : 0.5;
-
-export const calculatePetPlacement = (
-  viewportWidth: number,
-  normalizedX: number,
-  viewportHeight = Number.POSITIVE_INFINITY,
-): PetPlacement => {
-  const safeViewportWidth = Math.max(0, viewportWidth);
-  const safeViewportHeight = Math.max(0, viewportHeight);
-  const size = Math.min(
-    PET_RENDER_SIZE,
-    safeViewportWidth,
-    safeViewportHeight,
-  );
-  const bottom = Math.min(
-    PET_BOTTOM_MARGIN,
-    Math.max(0, safeViewportHeight - size),
-  );
-  const margin =
-    safeViewportWidth >= PET_RENDER_SIZE + PET_EDGE_MARGIN * 2
-      ? PET_EDGE_MARGIN
-      : 0;
-  const availableWidth = Math.max(
-    0,
-    safeViewportWidth - size - margin * 2,
-  );
-  const safeNormalizedX = normalizePosition(normalizedX);
-
-  return {
-    bottom,
-    normalizedX: safeNormalizedX,
-    size,
-    x: margin + availableWidth * safeNormalizedX,
-  };
-};
 
 const getRegistry = (): PetLayerRegistry => {
   const scope = globalThis as typeof globalThis & {
@@ -221,6 +178,8 @@ export const mountPetLayer = (options: PetLayerOptions): PetLayer => {
     options.assetUrl,
   );
   let normalizedX = normalizePosition(options.normalizedX);
+  let walk: { plan: WalkPlan; startedAt: number; onArrive?: (normalizedX: number) => void } | undefined;
+  let animationFrame: number | undefined;
 
   const renderPlacement = (): void => {
     const placement = calculatePetPlacement(
@@ -233,7 +192,43 @@ export const mountPetLayer = (options: PetLayerOptions): PetLayer => {
     hitTarget.style.setProperty('--tab-pets-size', `${placement.size}px`);
   };
 
-  window.addEventListener('resize', renderPlacement, { passive: true });
+  const cancelWalk = (): void => {
+    if (animationFrame !== undefined) window.cancelAnimationFrame(animationFrame);
+    animationFrame = undefined;
+    walk = undefined;
+  };
+
+  const tickWalk = (now: number): void => {
+    animationFrame = undefined;
+    if (!walk || destroyed) return;
+    const sample = sampleWalk(walk.plan, now - walk.startedAt);
+    normalizedX = sample.normalizedX;
+    renderPlacement();
+    if (sample.arrived) {
+      const onArrive = walk.onArrive;
+      walk = undefined;
+      onArrive?.(normalizedX);
+      return;
+    }
+    animationFrame = window.requestAnimationFrame(tickWalk);
+  };
+
+  const handleResize = (): void => {
+    if (walk) {
+      const now = window.performance.now();
+      walk.plan = rebaseWalkForViewport(
+        walk.plan,
+        now - walk.startedAt,
+        window.innerWidth,
+        window.innerHeight,
+      );
+      walk.startedAt = now;
+      normalizedX = walk.plan.startNormalizedX;
+    }
+    renderPlacement();
+  };
+
+  window.addEventListener('resize', handleResize, { passive: true });
   renderPlacement();
   document.documentElement.append(host);
 
@@ -243,7 +238,8 @@ export const mountPetLayer = (options: PetLayerOptions): PetLayer => {
     destroy: () => {
       if (destroyed) return;
       destroyed = true;
-      window.removeEventListener('resize', renderPlacement);
+      cancelWalk();
+      window.removeEventListener('resize', handleResize);
       host.remove();
       if (registry[options.runtimeId]?.host === host) {
         delete registry[options.runtimeId];
@@ -252,8 +248,25 @@ export const mountPetLayer = (options: PetLayerOptions): PetLayer => {
     hitTarget,
     host,
     setNormalizedX: (value) => {
+      cancelWalk();
       normalizedX = normalizePosition(value);
       renderPlacement();
+    },
+    walkToNormalizedX: (value, variation = 0, onArrive) => {
+      cancelWalk();
+      const plan = createWalkPlan(
+        normalizedX,
+        value,
+        window.innerWidth,
+        window.innerHeight,
+        variation,
+      );
+      walk = {
+        plan,
+        startedAt: window.performance.now(),
+        ...(onArrive ? { onArrive } : {}),
+      };
+      animationFrame = window.requestAnimationFrame(tickWalk);
     },
   };
 
