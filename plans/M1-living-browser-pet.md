@@ -5,14 +5,14 @@
 ## 진입 조건
 
 - TASK-006의 10곳 호환성 QA와 독립 리뷰는 PASS다. M0의 종료 기준은 증거로 충족했으나 Project OS의 canonical milestone 상태는 아직 active이므로 별도 상태 전이가 필요하다.
-- Momo Browser용 Idle, Walk, Sit, Look, Sleep, Groom 애니메이션 에셋을 준비한다. 현재 저장소에는 `idle-placeholder` 한 프레임만 있다.
+- Momo Browser용 Idle, Walk, Sit, Look, Sleep, Groom 애니메이션 에셋을 준비한다. 현재 런타임에는 `idle-placeholder` 한 프레임만 있고, 6종 4포즈 시안은 `art/drafts/m1-momo/`에 별도로 보관한다.
 - 기존 결정인 단일 PetState, Shadow DOM overlay, raster WebP sprite + CSS 이동, 주입 가능한 시각·난수에 기반한 결정적 Pet Brain을 유지한다.
 
 ## 착수 전 정리 (2026-10-05)
 
 - Project OS에는 현재 eligible task가 없다. TASK-006은 PASS/done이지만 M0 milestone은 canonical state에서 아직 active이며, 설치된 projectctl에는 milestone 완료·M1 활성화 명령이 없다. 따라서 이 초안만으로 M1 구현이나 canonical backlog를 시작하지 않는다.
 - `specs/architecture/asset-pipeline.md`의 초기 제작 7종은 Idle, Walk, Sit, Look, Sleep, Home Enter, Home Exit인 반면 M1 roadmap의 필수 재생 6종은 Idle, Walk, Sit, Look, Sleep, Groom이다. M1에 필요한 Groom의 제작 순서를 먼저 확정하고, Home Enter/Exit는 M3 범위와 혼동하지 않는다.
-- 현재 `src/assets/pets/momo/browser/idle-placeholder.webp`는 명시적 임시물이며 512 × 512 art master가 없다. 이 이미지를 M1 6종의 스타일 기준으로 확장할지, 별도 승인된 master를 사용할지 결정해야 일관된 에셋 제작을 시작할 수 있다.
+- 사용자는 현재 `idle-placeholder.webp`를 6종 시안의 기준으로 사용하는 안을 승인했다. 6종 contact sheet는 제작했지만 512 × 512 art master와 정렬된 256 × 256 WebP runtime frame은 아직 없다. 시안 검토·정리·프레임 export를 마치기 전에는 M1 entry asset 완료로 표시하지 않는다.
 
 ## 제안 작업 순서
 
